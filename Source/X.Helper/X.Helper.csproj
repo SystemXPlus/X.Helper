@@ -13,6 +13,7 @@
 		<PackageIcon>ICON.jpg</PackageIcon>
 		<RepositoryUrl>https://github.com/SystemxPlus/X.Helper</RepositoryUrl>
 		<PackageTags>JSON;EXCEL;HELPER;EXTENSION</PackageTags>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 
