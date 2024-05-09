@@ -7,16 +7,16 @@ using System.Security.Cryptography;
 using System.Runtime.InteropServices.ComTypes;
 
 
-public static class FileExtension
+public static class File
 {
     /// <summary>
     /// 文件转为二进制流
     /// </summary>
     /// <param name="file"></param>
     /// <returns></returns>
-    public static Stream ToStream(this FileInfo file)
+    public static System.IO.Stream ToStream(this FileInfo file)
     {
-        Stream stream = null;
+        System.IO.Stream stream = null;
         // 打开文件  
         using (FileStream fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
@@ -52,7 +52,7 @@ public static class FileExtension
         string result = null;
         using (var sha1 = SHA1.Create())
         {
-            using (var stream = File.OpenRead(file.FullName))
+            using (var stream = System.IO.File.OpenRead(file.FullName))
             {
                 var hash = sha1.ComputeHash(stream);
                 result = BitConverter.ToString(hash).Replace("-", "").ToUpper();
@@ -70,7 +70,7 @@ public static class FileExtension
         string result = null;
         using (var sha256 = SHA256.Create())
         {
-            using (var stream = File.OpenRead(file.FullName))
+            using (var stream = System.IO.File.OpenRead(file.FullName))
             {
                 var hash = sha256.ComputeHash(stream);
                 result = BitConverter.ToString(hash).Replace("-", "").ToUpper();
@@ -88,7 +88,7 @@ public static class FileExtension
         string result = null;
         using (var sha512 = SHA512.Create())
         {
-            using (var stream = File.OpenRead(file.FullName))
+            using (var stream = System.IO.File.OpenRead(file.FullName))
             {
                 var hash = sha512.ComputeHash(stream);
                 result = BitConverter.ToString(hash).Replace("-", "").ToUpper();
@@ -106,7 +106,7 @@ public static class FileExtension
         string result = null;
         using (var md5 = MD5.Create())
         {
-            using (var stream = File.OpenRead(file.FullName))
+            using (var stream = System.IO.File.OpenRead(file.FullName))
             {
                 var hash = md5.ComputeHash(stream);
                 result = BitConverter.ToString(hash).Replace("-", "").ToUpper();

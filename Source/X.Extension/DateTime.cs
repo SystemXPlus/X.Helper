@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-public static class DateTimeExtension
+public static class DateTime
 {
     
     /// <summary>
@@ -12,9 +12,9 @@ public static class DateTimeExtension
     /// </summary>
     /// <param name="dt"></param>
     /// <returns></returns>
-    public static string FormatToNow(this DateTime dt)
+    public static string FormatToNow(this System.DateTime dt)
     {
-        TimeSpan ts = DateTime.Now - dt;
+        TimeSpan ts = System.DateTime.Now - dt;
         if (ts.Days > 7)
         {
             return dt.ToString("yyyy-MM-dd");
@@ -42,9 +42,9 @@ public static class DateTimeExtension
     /// </summary>
     /// <param name="dt"></param>
     /// <returns></returns>
-    public static string FormatFromNow(this DateTime dt)
+    public static string FormatFromNow(this System.DateTime dt)
     {
-        TimeSpan ts = dt - DateTime.Now;
+        TimeSpan ts = dt - System.DateTime.Now;
         if (ts.Days>30)
         {
             return string.Format("{0}天后", ts.Days);

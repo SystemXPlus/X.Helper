@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 
 [Obsolete("该类未经过严格测试，请谨慎使用", false)]
-public static class StreamExtension
+public static class Stream
     {
     /// <summary>
     /// Stream对象转换为字节数组
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    public static byte[] ToByteArray(this Stream stream)
+    public static byte[] ToByteArray(this System.IO.Stream stream)
     {
         byte[] bytes = new byte[stream.Length];
         stream.Read(bytes, 0, bytes.Length);
@@ -27,7 +27,7 @@ public static class StreamExtension
     /// </summary>
     /// <param name="stream">Stream对象</param>
     /// <param name="filePath">文件完整路径</param>
-    public static void ToFile(this Stream stream, string filePath)
+    public static void ToFile(this System.IO.Stream stream, string filePath)
     {
         // 把 Stream 转换成 byte[]  
         byte[] bytes = new byte[stream.Length];
@@ -48,7 +48,7 @@ public static class StreamExtension
     /// 网络返回的Stream转为本地MemoryStream
     /// </summary>
     /// <param name="stream"></param>
-    public static Stream ToMemoryStream(this Stream stream)
+    public static System.IO.Stream ToMemoryStream(this System.IO.Stream stream)
     {
         MemoryStream memoryStream = new MemoryStream();
 

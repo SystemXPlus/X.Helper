@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Net;
 
 
 
-public static class StringExtension
+public static partial class String
 {
     #region 常用
 
@@ -124,7 +125,7 @@ public static class StringExtension
 
     public static bool IsFileExists(this string path)
     {
-        return File.Exists(path);
+        return System.IO.File.Exists(path);
     }
 
     public static bool IsDirectoryExists(this string path)
@@ -197,101 +198,20 @@ public static class StringExtension
     #endregion
 
 
-    #region 正则验证部分  （未完全测试）
-
-    private static RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Compiled;
-
-    private static Regex LetterOrNumber = new Regex(@"^[a-zA-Z0-9_]*$", options);
+    #region 普通验证
     /// <summary>
-    /// 验证是否字母数字组合（包含下划线）
+    /// 验证是否有效IP地址格式
     /// </summary>
-    /// <param name="str"></param>
+    /// <param name="source"></param>
     /// <returns></returns>
-    public static bool IsLetterOrNumber(this string str)
+    public static bool IsIPAddress(this string source)
     {
-        return LetterOrNumber.IsMatch(str);
-    }
-
-    private static Regex CNMobileNumber= new Regex(@"^1\d{10}$", options);
-    /// <summary>
-    /// 验证是否中国大陆地区手机号
-    /// </summary>
-    /// <param name="str"></param>
-    /// <returns></returns>
-    public static bool IsCNMobileNumber(this string str)
-    {
-        return CNMobileNumber.IsMatch(str);
-    }
-
-    private static Regex CNTelephoneNumber= new Regex(@"^([0-9]{3,4}-)?[0-9]{7,8}$", options);
-    /// <summary>
-    /// 验证是否中国大陆地区固定电话号码
-    /// </summary>
-    /// <param name="str"></param>
-    /// <returns></returns>
-    public static bool IsCNTelephoneNumber(this string str)
-    {
-        return CNTelephoneNumber.IsMatch(str);
-    }
-
-    private static Regex Email = new Regex(@"^[A-Za-z0-9]+([A-Za-z0-9_.-]+)*@([A-Za-z0-9]+[-.])+[A-Za-z0-9]{2,5}$", options);
-    /// <summary>
-    /// 验证是否有效的电子邮件地址
-    /// </summary>
-    /// <param name="str"></param>
-    /// <returns></returns>
-    public static bool IsEMail(this string str)
-    {
-        return Email.IsMatch(str);
-    }
-
-    private static Regex CNZipCode = new Regex(@"^\d{0}$", options);
-    /// <summary>
-    /// 验证是否中国大陆地区邮政编码
-    /// </summary>
-    /// <param name="str"></param>
-    /// <returns></returns>
-    public static bool IsCNZipCode(this string str)
-    {
-        return CNZipCode.IsMatch(str);
-    }
-
-    private static Regex Number = new Regex(@"^(0|[1-9][0-9]*)$", options);
-    
-    /// <summary>
-    /// 验证字符串中是否为纯数字组合（不允许0开头）
-    /// </summary>
-    /// <param name="str"></param>
-    /// <returns></returns>
-    public static bool IsNumber(this string str)
-    {
-        return Number.IsMatch(str);
-    }
-
-    private static Regex NumberStr = new Regex(@"^[0-9]*$", options);
-    /// <summary>
-    /// 验证字符串中是否纯数字组合（允许0开头）
-    /// </summary>
-    /// <param name="str"></param>
-    /// <returns></returns>
-    public static bool IsNumberStr(this string str)
-    {
-        return NumberStr.IsMatch(str);
-    }
-
-    private static Regex Numeric = new Regex(@"^\d+(\.\d+)?$", options);
-
-    /// <summary>
-    /// 判断字符串是否小数格式
-    /// </summary>
-    /// <param name="str"></param>
-    /// <returns></returns>
-    public static bool IsNumeric(this string str)
-    {
-        return Numeric.IsMatch(str);
+        return IPAddress.TryParse(source, out var address);
     }
 
     #endregion
+
+    
 
 
 }

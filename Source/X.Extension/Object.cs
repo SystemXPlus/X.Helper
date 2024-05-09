@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-public static class ObjectExtension
+public static class Object
 {
 
     #region 常用

@@ -8,17 +8,17 @@ using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-public static class ByteExtension
+public static class Byte
 {
     /// <summary>
     /// 字节数组转换为Image对象
     /// </summary>
     /// <param name="bytes"></param>
     /// <returns></returns>
-    public static Image ToImage(this byte[] bytes)
+    public static System.Drawing.Image ToImage(this byte[] bytes)
     {
         MemoryStream ms = new MemoryStream(bytes);
-        Image image = System.Drawing.Image.FromStream(ms);
+        System.Drawing.Image image = System.Drawing.Image.FromStream(ms);
         return image;
     }
 
@@ -32,7 +32,7 @@ public static class ByteExtension
     public static void ToFile(this byte[] bytes,string fileFullPath)
     {
         string file = fileFullPath;
-        Image image = bytes.ToImage();
+        System.Drawing.Image image = bytes.ToImage();
         ImageFormat format = image.RawFormat;
         if (format.Equals(ImageFormat.Jpeg))
         {
@@ -56,7 +56,7 @@ public static class ByteExtension
         }
         //System.IO.FileInfo info = new System.IO.FileInfo(file);
         //System.IO.Directory.CreateDirectory(info.Directory.FullName);
-        File.WriteAllBytes(file, bytes);
+        System.IO.File.WriteAllBytes(file, bytes);
         //return file;
     }
 
@@ -108,9 +108,9 @@ public static class ByteExtension
     /// </summary>
     /// <param name="bytes"></param>
     /// <returns></returns>
-    public static Stream BytesToStream(this byte[] bytes)
+    public static System.IO.Stream BytesToStream(this byte[] bytes)
     {
-        Stream stream = new MemoryStream(bytes);
+        System.IO.Stream stream = new MemoryStream(bytes);
         return stream;
     }
 

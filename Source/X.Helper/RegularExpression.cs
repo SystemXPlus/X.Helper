@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace X.Helper
 {
-    public static class RegularExpressions
+    public static class RegularExpression
     {
         /// <summary>
         /// 单次匹配查找
@@ -196,6 +196,7 @@ namespace X.Helper
             Regex regex = new Regex(@"^[A-Za-z0-9]+([A-Za-z0-9\-_.]+)*@([A-Za-z0-9]+[-.])+[A-Za-z0-9]{2,5}$", RegexOptions.IgnoreCase);
             return regex.Match(_value).Success;
         }
+
         /// <summary>
         /// 验证是否是电话--手机
         /// </summary>
@@ -217,7 +218,7 @@ namespace X.Helper
             return regex.IsMatch(ID);
         }
         /// <summary>
-        /// ID卡（中国大陆身份证）
+        /// 中国大陆身份证号码（中国大陆身份证）
         /// </summary>
         /// <param name="_value"></param>
         /// <returns></returns>
@@ -265,7 +266,7 @@ namespace X.Helper
             }
         }
         /// <summary>
-        /// 是否 int
+        /// 是否整型数值（long范围）
         /// </summary>
         /// <param name="_value"></param>
         /// <returns></returns>
@@ -283,22 +284,14 @@ namespace X.Helper
             return false;
         }
 
-        public static bool IsLengthStr(string _value, int _begin, int _end)
-        {
-            int length = _value.Length;
-            if ((length < _begin) && (length > _end))
-            {
-                return false;
-            }
-            return true;
-        }
+
 
         /// <summary>
-        /// 英文字母组成的字符串
+        /// 是否只有英文字母组成的字符串
         /// </summary>
         /// <param name="character"></param>
         /// <returns></returns>
-        public static bool IsOnlyCharacters(string character)
+        public static bool IsOnlyEnglishLetters(string character)
         {
             Regex regex = new Regex(@"^.[A-Za-z]+$");
             return regex.IsMatch(character);

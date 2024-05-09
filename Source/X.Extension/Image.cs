@@ -6,11 +6,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-public static class ImageExtension
+public static class Image
 {
 
     [Obsolete("方法有缺陷，现在修改为内部实际调用Object的ToByteArray扩展方法", false)]
-    public static byte[] ToByteArray(this Image image)
+    public static byte[] ToByteArray(this System.Drawing.Image image)
     {
         return ((object)image).ToByteArray();
         //ImageFormat format = image.RawFormat;
@@ -44,7 +44,7 @@ public static class ImageExtension
         //}
     }
 
-    public static string ToBase64(this Image image)
+    public static string ToBase64(this System.Drawing.Image image)
     {
         return Convert.ToBase64String(image.ToByteArray());
     }
@@ -54,16 +54,16 @@ public static class ImageExtension
     /// </summary>
     /// <param name="fileInfo"></param>
     /// <returns></returns>
-    public static Image ImageFromFile(this FileInfo fileInfo)
+    public static System.Drawing.Image ImageFromFile(this FileInfo fileInfo)
     {
-        Image image = null;
-        using (FileStream fs = File.OpenRead(fileInfo.FullName))
+        System.Drawing.Image image = null;
+        using (FileStream fs = System.IO.File.OpenRead(fileInfo.FullName))
         {
             int filelength = 0;
             filelength = (int)fs.Length;
-            Byte[] bytes = new Byte[filelength];
+            System.Byte[] bytes = new System.Byte[filelength];
             fs.Read(bytes, 0, filelength);
-            image = Image.FromStream(fs);
+            image = System.Drawing.Image.FromStream(fs);
         }
         return image;
     }
@@ -79,7 +79,7 @@ public static class ImageExtension
     /// <param name="quality">图像质量（JPEG压缩）</param>
     /// <param name="type">缩略图裁剪类型</param>
     /// <returns></returns>
-    public static Image GetThumbnail(this Image source, int width, int height, int quality = 80, CutType type = CutType.CutTopAutoZoom)
+    public static System.Drawing.Image GetThumbnail(this System.Drawing.Image source, int width, int height, int quality = 80, CutType type = CutType.CutTopAutoZoom)
     {
         if (source == null)
             return null;
@@ -101,7 +101,7 @@ public static class ImageExtension
     /// <param name="destinationHeight">生成缩略图宽度</param>
     /// <param name="quality">图像质量（JPEG压缩）</param>
     /// <returns></returns>
-    public static Image GetThumbnail(this Image source, int zoomWidth, int areaLeft, int areaTop, int areaWidth, int areaHeight, int destinationWidth, int destinationHeight, int quality = 80)
+    public static System.Drawing.Image GetThumbnail(this System.Drawing.Image source, int zoomWidth, int areaLeft, int areaTop, int areaWidth, int areaHeight, int destinationWidth, int destinationHeight, int quality = 80)
     {
         if (source == null)
             return null;
@@ -138,11 +138,11 @@ public static class ImageExtension
     /// <param name="type">缩略图裁剪类型</param>
     public static void GetThumbnail(this string sourcePath, string savePath, int width, int height, int quality = 80, CutType type = CutType.CutCenterAutoZoom)
     {
-        if (!File.Exists(sourcePath))
+        if (!System.IO.File.Exists(sourcePath))
             throw new FileNotFoundException("文件不存在");
         using (FileStream fs = new FileStream(sourcePath, FileMode.Open))
         {
-            Image source = Image.FromStream(fs);
+            System.Drawing.Image source = System.Drawing.Image.FromStream(fs);
             var thumb = source.GetThumbnail(width, height, quality, type);
             thumb.Save(savePath);
         }
@@ -163,11 +163,11 @@ public static class ImageExtension
     /// <param name="quality">图像质量（JPEG压缩）</param>
     public static void GetThumbnail(this string sourcePath, string savePath, int zoomWidth, int areaLeft, int areaTop, int areaWidth, int areaHeight, int destinationWidth, int destinationHeight, int quality = 80)
     {
-        if (!File.Exists(sourcePath))
+        if (!System.IO.File.Exists(sourcePath))
             throw new FileNotFoundException("文件不存在");
         using (FileStream fs = new FileStream(sourcePath, FileMode.Open))
         {
-            Image source = Image.FromStream(fs);
+            System.Drawing.Image source = System.Drawing.Image.FromStream(fs);
             var thumb = source.GetThumbnail(zoomWidth, areaLeft, areaTop, areaWidth, areaHeight, destinationWidth, destinationHeight, quality);
             thumb.Save(savePath);
         }
@@ -238,7 +238,7 @@ public static class ImageExtension
     /// <param name="customHeight">源图像缩放高度</param>
     /// <param name="left">裁剪框左边距</param>
     /// <param name="top">裁前框顶边距</param>
-    private static void SetCutSize(Image source, CutType cutType, ref int width, ref int height, out int customWidth, out int customHeight, out int left, out int top)
+    private static void SetCutSize(System.Drawing.Image source, CutType cutType, ref int width, ref int height, out int customWidth, out int customHeight, out int left, out int top)
     {
         //if (!File.Exists(sourceImagePath))
         //{
@@ -249,7 +249,7 @@ public static class ImageExtension
         //}
         ////加载图像文件
         //Image sourceImage = Image.FromStream(new MemoryStream(File.ReadAllBytes(sourceImagePath)));
-        Image sourceImage = source;
+        System.Drawing.Image sourceImage = source;
         //获取源文件尺寸
         int sourceWidth = sourceImage.Width;
         int sourceHeight = sourceImage.Height;
@@ -419,7 +419,7 @@ public static class ImageExtension
     /// <param name="height">裁剪区域高度</param>
     /// <param name="quality">图像质量（0-100　数值越大图像质量越高，默认50）</param>
     /// <returns>缩略图保存绝对路径</returns>
-    private static Image CreateThumbnail(Image source, int zoomWidth, int zoomHeight, int left, int top, int width, int height, int quality = 50)
+    private static System.Drawing.Image CreateThumbnail(System.Drawing.Image source, int zoomWidth, int zoomHeight, int left, int top, int width, int height, int quality = 50)
     {
 
 
@@ -429,7 +429,7 @@ public static class ImageExtension
             quality = 100;
         //加载图像文件
         //Image sourceImage = Image.FromStream(new MemoryStream(File.ReadAllBytes(sourceImagePath)));
-        Image sourceImage = source;
+        System.Drawing.Image sourceImage = source;
         //获取图像原始高度
         int sourceWidth = sourceImage.Width, sourceHeight = sourceImage.Height;
         if (!((zoomWidth == sourceWidth) && (zoomHeight == sourceHeight)))
@@ -502,7 +502,7 @@ public static class ImageExtension
                 }
                 MemoryStream ms = new MemoryStream();
                 bmp2.Save(ms, jpegImageCodecInfo, encoderParameters);
-                return Image.FromStream(ms);
+                return System.Drawing.Image.FromStream(ms);
                 //sourceImage.Dispose();
                 //bmp2.Dispose();
             }
@@ -523,7 +523,7 @@ public static class ImageExtension
     /// <param name="font">字体</param>
     /// <param name="brush">笔刷</param>
     /// <param name="point">水印位置</param>
-    public static Image WatermarkText(this Image image, string text, Font font, Brush brush, Point point)
+    public static System.Drawing.Image WatermarkText(this System.Drawing.Image image, string text, Font font, Brush brush, Point point)
     {
         Bitmap bmp = new Bitmap(image);
         Graphics g = Graphics.FromImage(bmp);
@@ -543,7 +543,7 @@ public static class ImageExtension
     /// <param name="font">字体</param>
     /// <param name="brush">笔刷</param>
     /// <param name="point">水印位置</param>
-    public static void WatermarkText(this Image image, string saveImagePath, string text, Font font, Brush brush, Point point)
+    public static void WatermarkText(this System.Drawing.Image image, string saveImagePath, string text, Font font, Brush brush, Point point)
     {
         Bitmap bmp = new Bitmap(image);
         Graphics g = Graphics.FromImage(bmp);
@@ -567,14 +567,14 @@ public static class ImageExtension
     /// <param name="point">水印位置</param>
     private static void WatermarkText(string sourceImagePath, string saveImagePath, string text, Font font, Brush brush, Point point)
     {
-        Image image = null;
-        using (FileStream fs = File.OpenRead(sourceImagePath))
+        System.Drawing.Image image = null;
+        using (FileStream fs = System.IO.File.OpenRead(sourceImagePath))
         {
             int filelength = 0;
             filelength = (int)fs.Length;
-            Byte[] bytes = new Byte[filelength];
+            System.Byte[] bytes = new System.Byte[filelength];
             fs.Read(bytes, 0, filelength);
-            image = Image.FromStream(fs);
+            image = System.Drawing.Image.FromStream(fs);
         }
         Bitmap bmp = new Bitmap(image);
         Graphics g = Graphics.FromImage(bmp);
@@ -599,7 +599,7 @@ public static class ImageExtension
     /// <param name="point"></param>
     /// <param name="quality">0-100 100最高质量 默认值100</param>
     /// <param name="transparency">0.1- 1 1为不透明 默认值1</param>
-    public static void WatermarkImage(this Image image, Image watermarkImage
+    public static void WatermarkImage(this System.Drawing.Image image, System.Drawing.Image watermarkImage
         , string saveImagePath
         , Point point
         , int quality = 100
@@ -612,7 +612,7 @@ public static class ImageExtension
         //g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
         //设置高质量,低速度呈现平滑程度
         //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-        Image watermark = watermarkImage;
+        System.Drawing.Image watermark = watermarkImage;
 
         if (watermark.Height >= image.Height || watermark.Width >= image.Width)
             return;

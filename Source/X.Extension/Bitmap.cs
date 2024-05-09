@@ -12,7 +12,7 @@ public static class BitmapExtension
         using (MemoryStream ms = new MemoryStream())
         {
             bmp.Save(ms, bmp.RawFormat);
-            byte[] byteImage = new Byte[ms.Length];
+            byte[] byteImage = new System.Byte[ms.Length];
             byteImage = ms.ToArray();
             return byteImage;
         }
