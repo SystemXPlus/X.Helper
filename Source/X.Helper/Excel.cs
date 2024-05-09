@@ -49,11 +49,11 @@ namespace X.Helper
                         }
                         //获取第一个sheet
                         ISheet sheet = wk.GetSheetAt(0);
-                        if (sheet.IsNull())
+                        if (null == sheet)
                             return null;
                         //获取第一行
                         IRow headrow = sheet.GetRow(startRow);
-                        if (headrow.IsNull())
+                        if (null == headrow)
                             return null;
                         //创建列
                         for (int i = headrow.FirstCellNum; i < headrow.Cells.Count; i++)
@@ -69,7 +69,7 @@ namespace X.Helper
                             //获取当前行
                             IRow row = sheet.GetRow(r);
                             //如果当前行数据为空则跳过
-                            if (row.IsNull())
+                            if (null == row)
                                 continue;
                             int colCount = row.Cells.Count;
                             //以第一行所在的列数为准
@@ -81,10 +81,10 @@ namespace X.Helper
                             for (int j = 0; j < colCount; j++)
                             {
                                 ICell cell = row.GetCell(j); //一个单元格
-                                if (cell.IsNull())
+                                if (null == cell)
                                     continue;
                                 cell.SetCellType(CellType.String);
-                                if (cell.StringCellValue.IsNullOrEmpty())
+                                if (string.IsNullOrEmpty(cell.StringCellValue))
                                     continue;
                                 dr[j] = GetCellValue(cell); //获取单元格的值
                                                             //全为空则不取

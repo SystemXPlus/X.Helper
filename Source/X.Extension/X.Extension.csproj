@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net4.6;netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+	  <!--<Nullable>enable</Nullable>-->
+	  <ImplicitUsings>disable</ImplicitUsings>
+	  <NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<SignAssembly>False</SignAssembly>
+		<Title>X.Helper</Title>
+		<Authors>SystemX</Authors>
+		<Owners>607432@qq.com</Owners>
+		<Copyright>Copyright © SystemX %40 2023</Copyright>
+		<Version>1.0.9.0</Version>
+		<AssemblyVersion>$(Version)</AssemblyVersion>
+		<FileVersion>$(Version)</FileVersion>
+		<PackageProjectUrl>https://github.com/SystemxPlus/X.Helper</PackageProjectUrl>
+		<PackageIcon>ICON.jpg</PackageIcon>
+		<RepositoryUrl>https://github.com/SystemxPlus/X.Helper</RepositoryUrl>
+		<PackageTags>EXTENSION</PackageTags>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Description>A useless extension class</Description>
+  </PropertyGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net4.6'">
+
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="System.Drawing.Common">
+			<Version>8.0.4</Version>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+		<PackageReference Include="System.Drawing.Common">
+			<Version>8.0.4</Version>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="System.Drawing.Common">
+			<Version>8.0.4</Version>
+		</PackageReference>
+	</ItemGroup>
+
+
+	<ItemGroup>
+    <None Include="..\..\ICON.jpg" Link="ICON.jpg">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+    <None Include="..\..\README.md" Link="README.md">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
+</Project>

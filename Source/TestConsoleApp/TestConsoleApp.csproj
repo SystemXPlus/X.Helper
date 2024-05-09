@@ -64,6 +64,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\X.Extension\X.Extension.csproj">
+      <Project>{c8618434-8e27-423f-be8a-91dfa94c0549}</Project>
+      <Name>X.Extension</Name>
+    </ProjectReference>
     <ProjectReference Include="..\X.Helper\X.Helper.csproj">
       <Project>{02399ae0-7b1d-462f-b10c-3228eeb032b3}</Project>
       <Name>X.Helper</Name>
