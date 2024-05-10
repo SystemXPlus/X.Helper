@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
-public static class Enum
+public static class EnumExtension
 {
     /// <summary>
     /// 返回指定枚举值使用Display特性(Name="name")配置的Name

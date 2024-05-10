@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Runtime.InteropServices.ComTypes;
 
 
-public static class File
+public static class FileExtension
 {
     /// <summary>
     /// 文件转为二进制流

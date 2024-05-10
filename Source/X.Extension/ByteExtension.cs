@@ -8,7 +8,7 @@ using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-public static class Byte
+public static class ByteExtension
 {
     /// <summary>
     /// 字节数组转换为Image对象

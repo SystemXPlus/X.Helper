@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public static class T
+public static class TExtension
 {
     /// <summary>
     /// 创建一个指定类型的空的LIST

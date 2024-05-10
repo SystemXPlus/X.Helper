@@ -5,9 +5,8 @@
 	  <!--<Nullable>enable</Nullable>-->
 	  <ImplicitUsings>disable</ImplicitUsings>
 	  <NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<SignAssembly>False</SignAssembly>
-		<Title>X.Helper</Title>
+		<Title>X.Extension</Title>
 		<Authors>SystemX</Authors>
 		<Owners>607432@qq.com</Owners>
 		<Copyright>Copyright © SystemX %40 2023</Copyright>
@@ -19,9 +18,20 @@
 		<RepositoryUrl>https://github.com/SystemxPlus/X.Helper</RepositoryUrl>
 		<PackageTags>EXTENSION</PackageTags>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageReadmeFile>README_X.Extension.md</PackageReadmeFile>
 		<Description>A useless extension class</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\ICON.jpg">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README_X.Extension.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 
 	<ItemGroup>
@@ -49,17 +59,5 @@
 			<Version>8.0.4</Version>
 		</PackageReference>
 	</ItemGroup>
-
-
-	<ItemGroup>
-    <None Include="..\..\ICON.jpg" Link="ICON.jpg">
-      <PackagePath>\</PackagePath>
-      <Pack>True</Pack>
-    </None>
-    <None Include="..\..\README.md" Link="README.md">
-      <PackagePath>\</PackagePath>
-      <Pack>True</Pack>
-    </None>
-  </ItemGroup>
 
 </Project>

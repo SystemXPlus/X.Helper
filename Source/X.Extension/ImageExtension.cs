@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-public static class Image
+public static class ImageExtension
 {
 
     [Obsolete("方法有缺陷，现在修改为内部实际调用Object的ToByteArray扩展方法", false)]

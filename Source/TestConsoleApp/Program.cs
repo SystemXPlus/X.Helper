@@ -13,7 +13,7 @@ namespace TestConsoleApp
         static void TestMethod()
         {
             //TODO TEST METHOD
-            Extension.String.Test();
+            Extension.StringExtensionTest.Test();
         }
 
         static void Main(string[] args)

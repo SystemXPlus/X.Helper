@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-public static class DateTime
+public static class DateTimeExtension
 {
     
     /// <summary>

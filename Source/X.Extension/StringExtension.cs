@@ -8,7 +8,7 @@ using System.Net;
 
 
 
-public static partial class String
+public static partial class StringExtension
 {
     #region 常用
 

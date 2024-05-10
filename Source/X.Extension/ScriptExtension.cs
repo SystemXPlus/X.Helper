@@ -6,7 +6,7 @@ using System.Text;
 using System.IO;
 
 [Obsolete("需要引用COM组件 暂时放弃", true)]
-public static class Script
+public static class ScriptExtension
 {
 
 

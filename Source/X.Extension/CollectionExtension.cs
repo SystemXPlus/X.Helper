@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-public static class Collection
+public static class CollectionExtension
 {
     public static bool IsNullOrEmpty<T>(this IList<T> obj)
     {

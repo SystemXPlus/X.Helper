@@ -44,19 +44,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extension\Bitmap.cs" />
-    <Compile Include="Extension\Byte.cs" />
-    <Compile Include="Extension\Collection.cs" />
-    <Compile Include="Extension\DateTime.cs" />
-    <Compile Include="Extension\Enum.cs" />
-    <Compile Include="Extension\File.cs" />
-    <Compile Include="Extension\Hex.cs" />
-    <Compile Include="Extension\Image.cs" />
-    <Compile Include="Extension\Object.cs" />
-    <Compile Include="Extension\Script.cs" />
-    <Compile Include="Extension\Stream.cs" />
-    <Compile Include="Extension\String.cs" />
-    <Compile Include="Extension\T.cs" />
+    <Compile Include="Extension\BitmapExtensionTest.cs" />
+    <Compile Include="Extension\ByteExtensionTest.cs" />
+    <Compile Include="Extension\CollectionExtensionTest.cs" />
+    <Compile Include="Extension\DateTimeExtensionTest.cs" />
+    <Compile Include="Extension\EnumExtensionTest.cs" />
+    <Compile Include="Extension\FileExtensionTest.cs" />
+    <Compile Include="Extension\HexExtensionTest.cs" />
+    <Compile Include="Extension\ImageExtensionTest.cs" />
+    <Compile Include="Extension\ObjectExtensionTest.cs" />
+    <Compile Include="Extension\ScriptExtensionTest.cs" />
+    <Compile Include="Extension\StreamExtensionTest.cs" />
+    <Compile Include="Extension\StringExtensionTest.cs" />
+    <Compile Include="Extension\TExtensionTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

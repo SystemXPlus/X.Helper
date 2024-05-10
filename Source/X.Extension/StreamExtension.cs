@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 
 [Obsolete("该类未经过严格测试，请谨慎使用", false)]
-public static class Stream
+public static class StreamExtension
     {
     /// <summary>
     /// Stream对象转换为字节数组
