@@ -32,7 +32,7 @@ namespace X.Helper
         {
             var settings = new JsonSerializerSettings();
 
-            if (retain != null || ignore != null || turns != null || ignoreLargeObject)
+            if (retain != null || ignore != null || turns != null)
             {
                 // 设置序列化解析器
                 settings.ContractResolver = new CustomContractResolver(retain, ignore, turns);

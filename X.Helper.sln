@@ -9,7 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsoleApp", "Source\Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "X.Extension", "Source\X.Extension\X.Extension.csproj", "{C8618434-8E27-423F-BE8A-91DFA94C0549}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X.Helper.Excel", "Source\X.Helper.Excel\X.Helper.Excel.csproj", "{E9DBDFA4-8246-4C9C-A7CA-2E5EBAA63806}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "X.Helper.Excel", "Source\X.Helper.Excel\X.Helper.Excel.csproj", "{E9DBDFA4-8246-4C9C-A7CA-2E5EBAA63806}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X.Helper.Cache", "Source\X.Helper.Cache\X.Helper.Cache.csproj", "{B06475B3-FCC2-4DA8-B143-D58DEB0EE575}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{E9DBDFA4-8246-4C9C-A7CA-2E5EBAA63806}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9DBDFA4-8246-4C9C-A7CA-2E5EBAA63806}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9DBDFA4-8246-4C9C-A7CA-2E5EBAA63806}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B06475B3-FCC2-4DA8-B143-D58DEB0EE575}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B06475B3-FCC2-4DA8-B143-D58DEB0EE575}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B06475B3-FCC2-4DA8-B143-D58DEB0EE575}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B06475B3-FCC2-4DA8-B143-D58DEB0EE575}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

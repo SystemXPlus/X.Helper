@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net4.6;netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+		<!--<Nullable>enable</Nullable>-->
+		<ImplicitUsings>disable</ImplicitUsings>
+		<NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
+		<SignAssembly>False</SignAssembly>
+		<Title>X.Helper.Cache</Title>
+		<Authors>SystemX</Authors>
+		<Owners>607432@qq.com</Owners>
+		<Copyright>Copyright © SystemX %40 2023</Copyright>
+		<Version>1.0.2.0</Version>
+		<AssemblyVersion>$(Version)</AssemblyVersion>
+		<FileVersion>$(Version)</FileVersion>
+		<PackageProjectUrl>https://github.com/SystemxPlus/X.Helper</PackageProjectUrl>
+		<PackageIcon>ICON.jpg</PackageIcon>
+		<RepositoryUrl>https://github.com/SystemxPlus/X.Helper</RepositoryUrl>
+		<PackageTags>CACHE;REDIS;HELPER;</PackageTags>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageReadmeFile>README_X.Helper.Cache.md</PackageReadmeFile>
+		<Description>A useless helper class</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\ICON.jpg">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\README_X.Helper.Cache.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net4.6'">
+		<PackageReference Include="ServiceStack.Redis">
+			<Version>5.14.0</Version>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="ServiceStack.Redis">
+			<Version>8.2.2</Version>
+		</PackageReference>
+	<PackageReference Include="System.Configuration.ConfigurationManager">
+		<Version>8.0.0</Version>
+	</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+		<PackageReference Include="ServiceStack.Redis">
+			<Version>8.2.2</Version>
+		</PackageReference>
+	<PackageReference Include="System.Configuration.ConfigurationManager">
+		<Version>8.0.0</Version>
+	</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="ServiceStack.Redis">
+			<Version>8.2.2</Version>
+		</PackageReference>
+	<PackageReference Include="System.Configuration.ConfigurationManager">
+		<Version>8.0.0</Version>
+	</PackageReference>
+	</ItemGroup>
+</Project>
