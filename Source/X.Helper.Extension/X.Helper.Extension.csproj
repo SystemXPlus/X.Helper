@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net4.6;netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>net4.6.1;netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
 	  <!--<Nullable>enable</Nullable>-->
 	  <ImplicitUsings>disable</ImplicitUsings>
 	  <NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
 		<SignAssembly>False</SignAssembly>
-		<Title>X.Extension</Title>
+		<Title>X.Helper.Extension</Title>
 		<Authors>SystemX</Authors>
 		<Owners>607432@qq.com</Owners>
 		<Copyright>Copyright © SystemX %40 2023</Copyright>
@@ -18,7 +18,7 @@
 		<RepositoryUrl>https://github.com/SystemxPlus/X.Helper</RepositoryUrl>
 		<PackageTags>EXTENSION</PackageTags>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<PackageReadmeFile>README_X.Extension.md</PackageReadmeFile>
+		<PackageReadmeFile>README_X.Helper.Extension.md</PackageReadmeFile>
 		<Description>A useless extension class</Description>
   </PropertyGroup>
 
@@ -27,7 +27,7 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\..\README_X.Extension.md">
+    <None Include="..\..\README_X.Helper.Extension.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -38,7 +38,7 @@
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net4.6'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net4.6.1'">
 
 	</ItemGroup>
 

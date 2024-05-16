@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace X.Helper.Cache.Interface
+namespace X.Helper.Cache
 {
     /// <summary>
     /// 缓存HELPER类接口
@@ -16,7 +16,7 @@ namespace X.Helper.Cache.Interface
         /// </summary>
         /// <param name="index">索引号：0-15（默认0）</param>
         /// <returns></returns>
-        ICacheHelper GetDatabase(int index);
+        ICacheHelper GetDatabase(long index);
         /// <summary>
         /// 查询指定KEY是否存在
         /// </summary>

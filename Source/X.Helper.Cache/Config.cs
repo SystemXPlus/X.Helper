@@ -8,7 +8,22 @@ namespace X.Helper.Cache
 {
     public static class Config
     {
-        public static double Timeout { get; set; } = 20;
+        private static double _DefaultTimeout = 20;
+        /// <summary>
+        /// 默认过期时间（分钟）
+        /// </summary>
+        public static double DefaultTimeout {
+            get
+            {
+                return _DefaultTimeout;
+            }
+            set
+            {
+                if(value < -1)
+                    throw new ArgumentOutOfRangeException("DefaultTimeout", new Exception("不能设置小于-1的过期时间"));
+                _DefaultTimeout = value;
+            }
+        }
 
         private static int _DefaultDatabase = 0;
         public static int DefaultDatabase
@@ -84,9 +99,16 @@ namespace X.Helper.Cache
             set { _RedisPassword = value; }
         }
 
-
+        #region ServiceStack.Redis
+        /// <summary>
+        /// 最大读取池大小
+        /// </summary>
         public static int MaxReadPoolSize { get; set; } = 100;
+        /// <summary>
+        /// 最大写入池大小
+        /// </summary>
         public static int MaxWritePoolSize { get; set; } = 100;
         public static bool AutoStart { get; set; } = true;
+        #endregion
     }
 }
