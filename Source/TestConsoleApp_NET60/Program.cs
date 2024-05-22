@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-
-namespace TestConsoleApp
+namespace TestConsoleApp_NET60
 {
     internal class Program
     {
         static void TestMethod()
         {
             //TODO TEST METHOD
-            var str = X.Helper.Config.GetAppsetting("TestKey");
+            var str = X.Helper.Config.GetAppsetting("database:connstring");
             Console.WriteLine(str);
             var str2 = X.Helper.Config.GetAppsetting("TestKye2");
             Console.WriteLine(str2);
