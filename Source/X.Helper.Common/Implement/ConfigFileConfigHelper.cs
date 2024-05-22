@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace X.Helper.Implement
+namespace X.Helper.Common.Implement
 {
 #if NET461
     public class ConfigFileConfigHelper : Interface.IConfigHelper

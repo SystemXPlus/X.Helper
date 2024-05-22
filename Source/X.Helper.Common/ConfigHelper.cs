@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using X.Helper.Interface;
+using X.Helper.Common.Interface;
 
-namespace X.Helper
+namespace X.Helper.Common
 {
-    public static class Config
+    public static class ConfigHelper
     {
         private static readonly IConfigHelper helper;
 
-        static Config()
+        static ConfigHelper()
         {
 #if NET461
             helper = new Implement.ConfigFileConfigHelper();

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ConfigHelper.cs" />
     <Compile Include="Extension\BitmapExtensionTest.cs" />
     <Compile Include="Extension\ByteExtensionTest.cs" />
     <Compile Include="Extension\CollectionExtensionTest.cs" />
@@ -64,6 +65,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\X.Helper.Common\X.Helper.Common.csproj">
+      <Project>{ed14a8a6-8103-4fa0-a2b5-742ba210f75b}</Project>
+      <Name>X.Helper.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\X.Helper.Extension\X.Helper.Extension.csproj">
       <Project>{b87163fe-8186-4256-8b53-66d18e615753}</Project>
       <Name>X.Helper.Extension</Name>

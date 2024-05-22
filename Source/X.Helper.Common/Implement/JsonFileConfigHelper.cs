@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 #endif
 
-namespace X.Helper.Implement
+namespace X.Helper.Common.Implement
 {
 #if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
     public class JsonFileConfigHelper : Interface.IConfigHelper

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace X.Helper.Interface
+namespace X.Helper.Common.Interface
 {
     public interface IConfigHelper
     {
