@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using ServiceStack.Redis;
 
@@ -9,62 +11,120 @@ namespace X.Helper.Cache
 {
     // Install-Package ServiceStack -ProjectName xxx -Version 3.9.71
 
-    public class RedisHelper
+    public class ServiceStackRedisHelper:ICacheHelper
     {
-        private static string RedisServer = "localhost";
-        private static int RedisPort = 6379;
-        private static string RedisPassword = string.Empty;
-        private static PooledRedisClientManager RedisClientPool = null;
+        private static readonly string RedisServer = "localhost";
+        private static readonly string RedisPort = "6379";
+        private static readonly string RedisPassword = string.Empty;
+        private PooledRedisClientManager RedisClientPool = null;
+        private static readonly List<string> RedisServers = new List<string>();
+        private static readonly List<string> RedisPorts = new List<string>();
+        private static readonly List<string> RedisPassowrd = new List<string>();
+        private static readonly Dictionary<double, ServiceStackRedisHelper> DbCache = new Dictionary<double, ServiceStackRedisHelper>();
 
-        static RedisHelper()
+        private long _DbIndex = Config.DefaultDatabaseIndex;
+        public long DbIndex
         {
-            #region 从CONFIG文件读取连接参数
-            try
-            {
-                RedisServer = System.Configuration.ConfigurationManager.AppSettings["RedisServer"];
-                if (string.IsNullOrEmpty(RedisServer))
-                    RedisServer = "localhost";
-                int.TryParse(System.Configuration.ConfigurationManager.AppSettings["RedisPort"], out RedisPort);
-                if (RedisPort == 0)
-                    RedisPort = 6379;
-                RedisPassword = System.Configuration.ConfigurationManager.AppSettings["RedisPassword"];
-                if (string.IsNullOrEmpty(RedisPassword))
-                    RedisPassword = string.Empty;
-            }
-            catch { throw new Exception("REDIS连接参数配置失败"); }
-            #endregion
-
-            CreateRedisClientManager();
+            get { return _DbIndex; }
         }
+            
 
-        private static void CreateRedisClientManager()
-        {
-            #region 连接池
-            RedisClientManagerConfig config = new RedisClientManagerConfig
-            {
-                MaxReadPoolSize = 100,
-                MaxWritePoolSize = 100
-            };
-            RedisClientPool = new PooledRedisClientManager(new string[] { string.Format("{0}{1}{2}:{3}", RedisPassword, string.IsNullOrEmpty(RedisPassword) ? "" : "@", RedisServer, RedisPort) },
-                new string[] { string.Format("{0}{1}{2}:{3}", RedisPassword, string.IsNullOrEmpty(RedisPassword) ? "" : "@", RedisServer, RedisPort) },
-                config);
+        private static readonly object LockInstanceObject = new object();
 
-            #endregion
-        }
+        private static readonly object LockObject = new object();
 
         /// <summary>
         /// 默认超时时间（分钟）
         /// </summary>
-        private const double TIMEOUT = 20;
+        private static readonly double TIMEOUT = 20;
 
-        private static object LockObject = new object();
+        static ServiceStackRedisHelper()
+        {
+            #region 从CONFIG文件读取连接参数
+            try
+            {
+#if NET461
+                var redisServerConfigName = "RedisServer";
+                var redisPortConfigName = "RedisPort";
+                var redisPasswordConfigName = "RedisPassword";
+#endif
+#if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
+                var redisServerConfigName = "Cache:RedisServer";
+                var redisPortConfigName = "Cache:RedisPort";
+                var redisPasswordConfigName = "Cache:RedisPassword";
+#endif
+                RedisServer = X.Helper.Common.ConfigHelper.GetAppsetting(redisServerConfigName);
+                if (string.IsNullOrEmpty(RedisServer))
+                    RedisServer = "localhost";
+                RedisPort = X.Helper.Common.ConfigHelper.GetAppsetting(redisPortConfigName);
+                if (string.IsNullOrEmpty(RedisPort))
+                    RedisPort = "6379";
+                RedisPassword = X.Helper.Common.ConfigHelper.GetAppsetting(redisPasswordConfigName);
+                if (string.IsNullOrEmpty(RedisPassword))
+                    RedisPassword = string.Empty;
 
-        private static RedisClient client { get; set; }
+                TIMEOUT = Config.DefaultTimeout;
+
+                /*
+                 * TODO 准备支持 服务器集群 读写分离
+                 * 多台服务器、端口、密码在配置文件中以;分隔
+                 * 端口、密码与服务器一一对应，如未匹配上则使用默认值 Port="6379" Password=""
+                 * 服务器默认可读写，只读服务器需以[R]为前缀
+                 * */
+
+            }
+            catch (Exception ex) 
+            { 
+                throw new TypeInitializationException(typeof(ServiceStackRedisHelper).FullName, ex); 
+            }
+#endregion
+
+            //CreateRedisClientManager();
+        }
+
+        private static PooledRedisClientManager CreateRedisClientManager(long dbIndex)
+        {
+            #region 连接池
+            RedisClientManagerConfig config = new RedisClientManagerConfig
+            {
+                MaxReadPoolSize = Config.MaxReadPoolSize,
+                MaxWritePoolSize = Config.MaxWritePoolSize
+            };
+            var redisClientPool = new PooledRedisClientManager(new string[] { string.Format("{0}{1}{2}:{3}", RedisPassword, string.IsNullOrEmpty(RedisPassword) ? "" : "@", RedisServer, RedisPort) },
+                new string[] { string.Format("{0}{1}{2}:{3}", RedisPassword, string.IsNullOrEmpty(RedisPassword) ? "" : "@", RedisServer, RedisPort) },
+                config,
+                dbIndex,
+                null,
+                null);
+            return redisClientPool;
+            #endregion
+        }
+
+        public ICacheHelper GetDatabase(long? index = 0)
+        {
+            //返回包含指定indexDB对象的实例 
+            var dbIndex = index ?? Config.DefaultDatabaseIndex;
+            if (!DbCache.ContainsKey(dbIndex))
+            {
+                lock (LockInstanceObject)
+                {
+                    if (!DbCache.ContainsKey(dbIndex))
+                    {
+                        RedisClientPool = CreateRedisClientManager(dbIndex);
+                        DbCache[dbIndex] = this;
+                    }
+                }
+            }
+            _DbIndex = dbIndex;
+            return DbCache[dbIndex];
+        }
+
+        //private static RedisClient client { get; set; }
 
         /// <summary>
         /// 存储客户端
         /// </summary>
-        private static RedisClient NewClient
+        private RedisClient NewClient
         {
             get
             {
@@ -73,7 +133,7 @@ namespace X.Helper.Cache
                     lock (LockObject)
                     {
                         if (RedisClientPool == null)
-                            CreateRedisClientManager();
+                            CreateRedisClientManager(_DbIndex);
                     }
                 }
 
@@ -97,7 +157,7 @@ namespace X.Helper.Cache
         /// <param name="client">客户端</param>
         /// <param name="key">存储键</param>
         /// <returns>键内容数量</returns>
-        private static long ExistsKey(RedisClient client, string key)
+        private long ExistsKey(RedisClient client, string key)
         {
             return client.Exists(key);
         }
@@ -110,11 +170,11 @@ namespace X.Helper.Cache
         /// <param name="client">客户端</param>
         /// <param name="key">存储键</param>
         /// <param name="obj">存储值</param>
-        /// <param name="minutes">超时时间</param>
+        /// <param name="timeout">超时时间</param>
         /// <returns>是否成功</returns>
-        private static bool SetValue<T>(RedisClient client, string key, T obj, double minutes = TIMEOUT) where T : class
+        private bool SetValue<T>(RedisClient client, string key, T obj, double? timeout = null) where T : class
         {
-            return client.Set<T>(key, obj, DateTime.Now.AddMinutes(minutes));
+            return client.Set<T>(key, obj, DateTime.Now.AddMinutes(timeout??TIMEOUT));
         }
 
 
@@ -125,7 +185,7 @@ namespace X.Helper.Cache
         /// <param name="client">客户端</param>
         /// <param name="key">存储键</param>
         /// <returns>内容</returns>
-        private static T GetValue<T>(RedisClient client, string key) where T : class
+        private T GetValue<T>(RedisClient client, string key) where T : class
         {
             if (ExistsKey(client, key) < 1)
             {
@@ -139,21 +199,21 @@ namespace X.Helper.Cache
         /// <typeparam name="T">泛型</typeparam>
         /// <param name="client">客户端</param>
         /// <param name="key">存储键</param>
-        /// <param name="minutes">自动延期（分钟） 该值大于0时若当时过期时间剩余不足设置定一半时自动延期</param>
+        /// <param name="timeout">自动延期（分钟） 该值大于0时若当时过期时间剩余不足设置定一半时自动延期</param>
         /// <returns>内容</returns>
-        private static T GetValue<T>(RedisClient client, string key, double minutes = TIMEOUT) where T : class
+        private T GetValue<T>(RedisClient client, string key, double? timeout = 0) where T : class
         {
             if (ExistsKey(client, key) < 1)
             {
                 return null;
             }
-            if (minutes > 0)
+            if (timeout != null && timeout > 0)
             {
                 //自动延期
                 var ttl = client.Ttl(key);
-                if (ttl > 0 && ttl < (minutes / 2) * 60)    //TTL>0时才执行自动延期。 -1 为永不过期 -2为KEY不存在
+                if (ttl > 0 && ttl < (timeout / 2) * 60)    //TTL>0时才执行自动延期。 -1 为永不过期 -2为KEY不存在
                 {
-                    client.ExpireEntryAt(key, DateTime.Now.AddMinutes(minutes));
+                    client.ExpireEntryAt(key, DateTime.Now.AddMinutes(timeout ?? TIMEOUT));
                 }
             }
             return client.Get<T>(key);
@@ -164,7 +224,7 @@ namespace X.Helper.Cache
         /// </summary>
         /// <param name="key">存储键</param>
         /// <returns>键内容数量</returns>
-        public static bool ExistsKey(string key)
+        public bool ExistsKey(string key)
         {
             using (var client = NewClient)
             {
@@ -178,7 +238,7 @@ namespace X.Helper.Cache
         /// </summary>
         /// <param name="key">存储键</param>
         /// <returns>是否成功</returns>
-        public static bool RemoveKey(string key)
+        public bool RemoveKey(string key)
         {
             using (var client = NewClient)
             {
@@ -196,13 +256,13 @@ namespace X.Helper.Cache
         /// <typeparam name="T">泛型</typeparam>
         /// <param name="key">存储键</param>
         /// <param name="obj">存储值</param>
-        /// <param name="minutes">超时时间</param>
+        /// <param name="timeout">超时时间</param>
         /// <returns>是否成功</returns>
-        public static bool SetValue<T>(string key, T obj, double minutes = TIMEOUT) where T : class
+        public bool SetValue<T>(string key, T obj, double? timeout = null) where T : class
         {
             using (var client = NewClient)
             {
-                return SetValue<T>(client, key, obj, minutes);
+                return SetValue<T>(client, key, obj, timeout);
             }
         }
         /// <summary>
@@ -210,7 +270,7 @@ namespace X.Helper.Cache
         /// </summary>
         /// <typeparam name="T">泛型</typeparam>
         /// <param name="dic">字典（键,实体）</param>
-        public static void SetValue<T>(IDictionary<string, T> dic) where T : class
+        public void SetValue<T>(IDictionary<string, T> dic) where T : class
         {
             using (var client = NewClient)
             {
@@ -224,7 +284,7 @@ namespace X.Helper.Cache
         /// <typeparam name="T">泛型</typeparam>
         /// <param name="key">存储键</param>
         /// <returns>内容</returns>
-        public static T GetValue<T>(string key) where T : class
+        public  T GetValue<T>(string key) where T : class
         {
             using (var client = NewClient)
             {
@@ -242,7 +302,7 @@ namespace X.Helper.Cache
         /// <param name="key">存储键</param>
         /// <param name="timeout">若读取数据时剩余过期时间不足该值的一半则自动续期</param>
         /// <returns></returns>
-        public static T GetValue<T>(string key, double timeout) where T : class
+        public  T GetValue<T>(string key, double timeout) where T : class
         {
             using (var client = NewClient)
             {
@@ -260,10 +320,10 @@ namespace X.Helper.Cache
         /// <typeparam name="T">泛型</typeparam>
         /// <param name="key">存储键</param>
         /// <param name="func">存储值委托</param>
-        /// <param name="minutes">超时时间</param>
-        /// <param name="AUTO_RENEW">自动续期？该值为TRUE时若在剩余过期时间不足一半时读取数据则自动续期</param>
+        /// <param name="timeout">超时时间</param>
+        /// <param name="autoRenew">自动续期？该值为TRUE时若在剩余过期时间不足一半时读取数据则自动续期</param>
         /// <returns>内容</returns>
-        public static T GetValue<T>(string key, Func<T> func, double minutes = TIMEOUT, bool AUTO_RENEW = false) where T : class
+        public T GetValue<T>(string key, Func<T> func, double? timeout = null, bool autoRenew = false) where T : class
         {
             using (var client = NewClient)
             {
@@ -277,7 +337,7 @@ namespace X.Helper.Cache
 
                         if (obj != null)
                         {
-                            SetValue<T>(client, key, obj, minutes);
+                            SetValue<T>(client, key, obj, timeout);
                         }
                     }
 
@@ -285,9 +345,9 @@ namespace X.Helper.Cache
                 }
                 else
                 {
-                    if (AUTO_RENEW)
+                    if (autoRenew)
                     {
-                        return GetValue<T>(client, key, minutes);
+                        return GetValue<T>(client, key, timeout);
                     }
                     else
                     {
@@ -349,7 +409,7 @@ namespace X.Helper.Cache
         /// </summary>
         /// <param name="queueId">队列ID</param>
         /// <param name="value">入列值（可以保存缓存对象的KEY）</param>
-        public static void Enqueue(string queueId, string value)
+        public  void Enqueue(string queueId, string value)
         {
             using (var client = NewClient)
             {
@@ -357,11 +417,11 @@ namespace X.Helper.Cache
             }
         }
 
-        public static void Enqueue<T>(string queueId, string key, T obj, double minutes = TIMEOUT) where T : class
+        public  void Enqueue<T>(string queueId, string key, T obj, double? timeout = null) where T : class
         {
             using (var client = NewClient)
             {
-                SetValue<T>(client, key, obj, minutes);
+                SetValue<T>(client, key, obj, timeout);
                 Enqueue(client, queueId, key);
             }
         }
@@ -372,15 +432,15 @@ namespace X.Helper.Cache
         /// <param name="queueId"></param>
         /// <param name="key"></param>
         /// <param name="func"></param>
-        /// <param name="minutes"></param>
-        public static void Enqueue<T>(string queueId, string key, Func<T> func, double minutes = TIMEOUT) where T : class
+        /// <param name="timeout"></param>
+        public void Enqueue<T>(string queueId, string key, Func<T> func, double? timeout = null) where T : class
         {
-            var c = GetValue<T>(key, func, minutes);
+            var c = GetValue<T>(key, func, timeout);
             if (c != null)
                 using (var client = NewClient)
                 {
                     Enqueue(client, queueId, key);
-                    //client.ExpireEntryAt(key, DateTime.Now.AddMinutes(minutes));
+                    //client.ExpireEntryAt(key, DateTime.Now.AddMinutes(timeout));
                 }
         }
 
@@ -389,7 +449,7 @@ namespace X.Helper.Cache
         /// </summary>
         /// <param name="queueId">队列ID</param>
         /// <returns></returns>
-        public static string Dequeue(string queueId)
+        public string Dequeue(string queueId)
         {
             using (var client = NewClient)
             {
@@ -403,7 +463,7 @@ namespace X.Helper.Cache
         /// <typeparam name="T">泛型</typeparam>
         /// <param name="queueId">队列ID</param>
         /// <returns></returns>
-        public static T Dequeue<T>(string queueId) where T : class
+        public T Dequeue<T>(string queueId) where T : class
         {
             using (var client = NewClient)
             {
@@ -414,7 +474,7 @@ namespace X.Helper.Cache
             }
         }
 
-        public static List<string> GetAllItemFromQueue(string queueId)
+        public List<string> GetAllItemFromQueue(string queueId)
         {
             using (var client = NewClient)
             {
@@ -422,7 +482,7 @@ namespace X.Helper.Cache
             }
         }
 
-        public static void RemoveAllItemFromQueue(string queueId)
+        public void RemoveAllItemFromQueue(string queueId)
         {
             using (var client = NewClient)
             {
@@ -430,7 +490,7 @@ namespace X.Helper.Cache
             }
         }
 
-        public static string DequeueEnqueue(string queueId)
+        public string DequeueEnqueue(string queueId)
         {
             using (var client = NewClient)
             {
@@ -438,7 +498,7 @@ namespace X.Helper.Cache
             }
         }
 
-        public static string DequeueEnqueue(string fromQueueId, string toQueueId)
+        public string DequeueEnqueue(string fromQueueId, string toQueueId)
         {
             using (var client = NewClient)
             {
@@ -468,7 +528,7 @@ namespace X.Helper.Cache
         /// </summary>
         /// <param name="stackId">栈ID</param>
         /// <param name="value"></param>
-        public static void PushStack(string stackId, string value)
+        public void PushStack(string stackId, string value)
         {
             using (var client = NewClient)
             {
@@ -480,7 +540,7 @@ namespace X.Helper.Cache
         /// </summary>
         /// <param name="stackId">栈ID</param>
         /// <returns></returns>
-        public static string PopStack(string stackId)
+        public string PopStack(string stackId)
         {
             using (var client = NewClient)
             {
@@ -488,7 +548,7 @@ namespace X.Helper.Cache
             }
         }
 
-        public static T PopStack<T>(string stackId) where T : class
+        public T PopStack<T>(string stackId) where T : class
         {
             using (var client = NewClient)
             {

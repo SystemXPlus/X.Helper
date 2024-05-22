@@ -25,19 +25,19 @@ namespace X.Helper.Cache
             }
         }
 
-        private static int _DefaultDatabase = 0;
-        public static int DefaultDatabase
+        private static int _DefaultDatabaseIndex = 0;
+        public static int DefaultDatabaseIndex
         {
             get
             {
-                return _DefaultDatabase;
+                return _DefaultDatabaseIndex;
             }
             set
             {
                 var index = 0;
                 if (value >= 0 && value <= 15)
                     index = value;
-                _DefaultDatabase = index;
+                _DefaultDatabaseIndex = index;
             }
         }
 
