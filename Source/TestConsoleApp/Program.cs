@@ -13,7 +13,8 @@ namespace TestConsoleApp
         static void TestMethod()
         {
             //TODO TEST METHOD
-            Common.ConfigHelper.Test();
+            //Common.ConfigHelper.Test();
+            Cache.ServiceStackRedisHelperTest.Test();
         }
 
         #region Main with stopwatch

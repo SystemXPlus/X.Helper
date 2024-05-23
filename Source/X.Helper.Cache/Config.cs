@@ -8,6 +8,7 @@ namespace X.Helper.Cache
 {
     public static class Config
     {
+
         private static double _DefaultTimeout = 20;
         /// <summary>
         /// 默认过期时间（分钟）
@@ -41,6 +42,17 @@ namespace X.Helper.Cache
             }
         }
 
+#if NET461
+        private static readonly string RedisServerConfigName = "RedisServer";
+        private static readonly string RedisPortConfigName = "RedisPort";
+        private static readonly string RedisPasswordConfigName = "RedisPassword";
+#endif
+#if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
+                private static readonly string  RedisServerConfigName = "Cache:RedisServer";
+                private static readonly string  RedisPortConfigName = "Cache:RedisPort";
+                private static readonly string  RedisPasswordConfigName = "Cache:RedisPassword";
+#endif
+
         private static string _RedisServer;
 
         public static string RedisServer
@@ -49,7 +61,7 @@ namespace X.Helper.Cache
             {
                 if (string.IsNullOrEmpty(_RedisServer))
                 {
-                    var server = System.Configuration.ConfigurationManager.AppSettings["RedisServer"];
+                    var server = X.Helper.Common.ConfigHelper.GetAppsetting(RedisServerConfigName);
                     if (string.IsNullOrEmpty(server))
                     {
                         server = "localhost";
@@ -69,7 +81,7 @@ namespace X.Helper.Cache
             {
                 if (string.IsNullOrEmpty(_RedisPort))
                 {
-                    var port = System.Configuration.ConfigurationManager.AppSettings["RedisPort"];
+                    var port = X.Helper.Common.ConfigHelper.GetAppsetting(RedisPortConfigName);
                     if (string.IsNullOrEmpty(port))
                     {
                         port = "6379";
@@ -89,7 +101,7 @@ namespace X.Helper.Cache
             {
                 if (null == _RedisPassword)
                 {
-                    var password = System.Configuration.ConfigurationManager.AppSettings["RedisPassword"];
+                    var password = X.Helper.Common.ConfigHelper.GetAppsetting(RedisPasswordConfigName);
                     if (string.IsNullOrEmpty(password))
                         password = string.Empty;
                     _RedisPassword = password;

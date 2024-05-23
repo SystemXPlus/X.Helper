@@ -11,23 +11,16 @@ namespace X.Helper.Cache
 {
     // Install-Package ServiceStack -ProjectName xxx -Version 3.9.71
 
-    public class ServiceStackRedisHelper:ICacheHelper
+    public class ServiceStackRedisHelper : ICacheHelper
     {
-        private static readonly string RedisServer = "localhost";
-        private static readonly string RedisPort = "6379";
-        private static readonly string RedisPassword = string.Empty;
+
         private PooledRedisClientManager RedisClientPool = null;
         private static readonly List<string> RedisServers = new List<string>();
         private static readonly List<string> RedisPorts = new List<string>();
         private static readonly List<string> RedisPassowrd = new List<string>();
         private static readonly Dictionary<double, ServiceStackRedisHelper> DbCache = new Dictionary<double, ServiceStackRedisHelper>();
 
-        private long _DbIndex = Config.DefaultDatabaseIndex;
-        public long DbIndex
-        {
-            get { return _DbIndex; }
-        }
-            
+
 
         private static readonly object LockInstanceObject = new object();
 
@@ -43,25 +36,15 @@ namespace X.Helper.Cache
             #region 从CONFIG文件读取连接参数
             try
             {
-#if NET461
-                var redisServerConfigName = "RedisServer";
-                var redisPortConfigName = "RedisPort";
-                var redisPasswordConfigName = "RedisPassword";
-#endif
-#if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
-                var redisServerConfigName = "Cache:RedisServer";
-                var redisPortConfigName = "Cache:RedisPort";
-                var redisPasswordConfigName = "Cache:RedisPassword";
-#endif
-                RedisServer = X.Helper.Common.ConfigHelper.GetAppsetting(redisServerConfigName);
-                if (string.IsNullOrEmpty(RedisServer))
-                    RedisServer = "localhost";
-                RedisPort = X.Helper.Common.ConfigHelper.GetAppsetting(redisPortConfigName);
-                if (string.IsNullOrEmpty(RedisPort))
-                    RedisPort = "6379";
-                RedisPassword = X.Helper.Common.ConfigHelper.GetAppsetting(redisPasswordConfigName);
-                if (string.IsNullOrEmpty(RedisPassword))
-                    RedisPassword = string.Empty;
+                //RedisServer = X.Helper.Common.ConfigHelper.GetAppsetting(Config.RedisServer);
+                //if (string.IsNullOrEmpty(RedisServer))
+                //    RedisServer = "localhost";
+                //RedisPort = X.Helper.Common.ConfigHelper.GetAppsetting(Config.RedisPort);
+                //if (string.IsNullOrEmpty(RedisPort))
+                //    RedisPort = "6379";
+                //RedisPassword = X.Helper.Common.ConfigHelper.GetAppsetting(Config.RedisPassword);
+                //if (string.IsNullOrEmpty(RedisPassword))
+                //    RedisPassword = string.Empty;
 
                 TIMEOUT = Config.DefaultTimeout;
 
@@ -73,14 +56,33 @@ namespace X.Helper.Cache
                  * */
 
             }
-            catch (Exception ex) 
-            { 
-                throw new TypeInitializationException(typeof(ServiceStackRedisHelper).FullName, ex); 
+            catch (Exception ex)
+            {
+                throw new TypeInitializationException(typeof(ServiceStackRedisHelper).FullName, ex);
             }
-#endregion
+            #endregion
 
             //CreateRedisClientManager();
         }
+        public ServiceStackRedisHelper()
+        {
+            var index = Config.DefaultDatabaseIndex;
+            if (!DbCache.ContainsKey(index))
+            {
+                lock(LockInstanceObject)
+                {
+                    if (!DbCache.ContainsKey(index))
+                    {
+                        RedisClientPool = CreateRedisClientManager(index);
+                        _DbIndex = index;
+                        DbCache[index] = this;
+                    }
+
+                }
+            }
+        }
+
+        #region PRIVATE
 
         private static PooledRedisClientManager CreateRedisClientManager(long dbIndex)
         {
@@ -90,8 +92,8 @@ namespace X.Helper.Cache
                 MaxReadPoolSize = Config.MaxReadPoolSize,
                 MaxWritePoolSize = Config.MaxWritePoolSize
             };
-            var redisClientPool = new PooledRedisClientManager(new string[] { string.Format("{0}{1}{2}:{3}", RedisPassword, string.IsNullOrEmpty(RedisPassword) ? "" : "@", RedisServer, RedisPort) },
-                new string[] { string.Format("{0}{1}{2}:{3}", RedisPassword, string.IsNullOrEmpty(RedisPassword) ? "" : "@", RedisServer, RedisPort) },
+            var redisClientPool = new PooledRedisClientManager(new string[] { string.Format("{0}{1}{2}:{3}", Config.RedisPassword, string.IsNullOrEmpty(Config.RedisPassword) ? "" : "@", Config.RedisServer, Config.RedisPort) },
+                new string[] { string.Format("{0}{1}{2}:{3}", Config.RedisPassword, string.IsNullOrEmpty(Config.RedisPassword) ? "" : "@", Config.RedisServer, Config.RedisPort) },
                 config,
                 dbIndex,
                 null,
@@ -100,24 +102,7 @@ namespace X.Helper.Cache
             #endregion
         }
 
-        public ICacheHelper GetDatabase(long? index = 0)
-        {
-            //返回包含指定indexDB对象的实例 
-            var dbIndex = index ?? Config.DefaultDatabaseIndex;
-            if (!DbCache.ContainsKey(dbIndex))
-            {
-                lock (LockInstanceObject)
-                {
-                    if (!DbCache.ContainsKey(dbIndex))
-                    {
-                        RedisClientPool = CreateRedisClientManager(dbIndex);
-                        DbCache[dbIndex] = this;
-                    }
-                }
-            }
-            _DbIndex = dbIndex;
-            return DbCache[dbIndex];
-        }
+
 
         //private static RedisClient client { get; set; }
 
@@ -174,7 +159,7 @@ namespace X.Helper.Cache
         /// <returns>是否成功</returns>
         private bool SetValue<T>(RedisClient client, string key, T obj, double? timeout = null) where T : class
         {
-            return client.Set<T>(key, obj, DateTime.Now.AddMinutes(timeout??TIMEOUT));
+            return client.Set<T>(key, obj, DateTime.Now.AddMinutes(timeout ?? TIMEOUT));
         }
 
 
@@ -217,6 +202,36 @@ namespace X.Helper.Cache
                 }
             }
             return client.Get<T>(key);
+        }
+        #endregion
+
+        #region Inherit form ICacheHelper
+
+        private long _DbIndex = Config.DefaultDatabaseIndex;
+
+        public long DbIndex
+        {
+            get { return _DbIndex; }
+        }
+
+        public ICacheHelper GetDatabase(long? index = 0)
+        {
+            //返回包含指定indexDB对象的实例 
+            var dbIndex = index ?? Config.DefaultDatabaseIndex;
+            if (!DbCache.ContainsKey(dbIndex))
+            {
+                lock (LockInstanceObject)
+                {
+                    if (!DbCache.ContainsKey(dbIndex))
+                    {
+                        var instance = new ServiceStackRedisHelper();
+                        instance.RedisClientPool = CreateRedisClientManager(dbIndex);
+                        instance._DbIndex = dbIndex;
+                        DbCache[dbIndex] = instance;
+                    }
+                }
+            }
+            return DbCache[dbIndex];
         }
 
         /// <summary>
@@ -284,7 +299,7 @@ namespace X.Helper.Cache
         /// <typeparam name="T">泛型</typeparam>
         /// <param name="key">存储键</param>
         /// <returns>内容</returns>
-        public  T GetValue<T>(string key) where T : class
+        public T GetValue<T>(string key) where T : class
         {
             using (var client = NewClient)
             {
@@ -302,7 +317,7 @@ namespace X.Helper.Cache
         /// <param name="key">存储键</param>
         /// <param name="timeout">若读取数据时剩余过期时间不足该值的一半则自动续期</param>
         /// <returns></returns>
-        public  T GetValue<T>(string key, double timeout) where T : class
+        public T GetValue<T>(string key, double timeout) where T : class
         {
             using (var client = NewClient)
             {
@@ -382,6 +397,8 @@ namespace X.Helper.Cache
             }
         }
 
+        #endregion
+
 
         #region 队列（FIFO）
 
@@ -409,7 +426,7 @@ namespace X.Helper.Cache
         /// </summary>
         /// <param name="queueId">队列ID</param>
         /// <param name="value">入列值（可以保存缓存对象的KEY）</param>
-        public  void Enqueue(string queueId, string value)
+        public void Enqueue(string queueId, string value)
         {
             using (var client = NewClient)
             {
@@ -417,7 +434,7 @@ namespace X.Helper.Cache
             }
         }
 
-        public  void Enqueue<T>(string queueId, string key, T obj, double? timeout = null) where T : class
+        public void Enqueue<T>(string queueId, string key, T obj, double? timeout = null) where T : class
         {
             using (var client = NewClient)
             {

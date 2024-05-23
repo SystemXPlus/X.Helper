@@ -10,7 +10,7 @@
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
   <ItemGroup>
-    <ProjectReference Include="..\X.Helper.Common\X.Helper.Common.csproj" />
+    <ProjectReference Include="..\X.Helper.Cache\X.Helper.Cache.csproj" />
     <ProjectReference Include="..\X.Helper\X.Helper.csproj" />
   </ItemGroup>
 

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\ServiceStackRedisHelperTest.cs" />
     <Compile Include="Common\ConfigHelper.cs" />
     <Compile Include="Extension\BitmapExtensionTest.cs" />
     <Compile Include="Extension\ByteExtensionTest.cs" />
@@ -65,6 +66,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\X.Helper.Cache\X.Helper.Cache.csproj">
+      <Project>{b06475b3-fcc2-4da8-b143-d58deb0ee575}</Project>
+      <Name>X.Helper.Cache</Name>
+    </ProjectReference>
     <ProjectReference Include="..\X.Helper.Common\X.Helper.Common.csproj">
       <Project>{ed14a8a6-8103-4fa0-a2b5-742ba210f75b}</Project>
       <Name>X.Helper.Common</Name>
