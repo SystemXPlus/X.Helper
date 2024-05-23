@@ -31,6 +31,7 @@ namespace X.Helper.Cache
         /// </summary>
         private static readonly double TIMEOUT = 20;
 
+        #region 构造
         static ServiceStackRedisHelper()
         {
             #region 从CONFIG文件读取连接参数
@@ -64,37 +65,33 @@ namespace X.Helper.Cache
 
             //CreateRedisClientManager();
         }
-        public ServiceStackRedisHelper()
+        public ServiceStackRedisHelper() : this(Config.DefaultDatabaseIndex) { }
+        public ServiceStackRedisHelper(long dbIndex)
         {
-            var index = Config.DefaultDatabaseIndex;
+            var index = dbIndex;
+            RedisClientPool = CreateRedisClientManager(index);
+            _DbIndex = index;
             if (!DbCache.ContainsKey(index))
             {
-                lock(LockInstanceObject)
+                lock (LockInstanceObject)
                 {
                     if (!DbCache.ContainsKey(index))
                     {
-                        RedisClientPool = CreateRedisClientManager(index);
-                        _DbIndex = index;
                         DbCache[index] = this;
                     }
-
                 }
             }
-        }
+        } 
+        #endregion
 
         #region PRIVATE
 
         private static PooledRedisClientManager CreateRedisClientManager(long dbIndex)
         {
             #region 连接池
-            RedisClientManagerConfig config = new RedisClientManagerConfig
-            {
-                MaxReadPoolSize = Config.MaxReadPoolSize,
-                MaxWritePoolSize = Config.MaxWritePoolSize
-            };
             var redisClientPool = new PooledRedisClientManager(new string[] { string.Format("{0}{1}{2}:{3}", Config.RedisPassword, string.IsNullOrEmpty(Config.RedisPassword) ? "" : "@", Config.RedisServer, Config.RedisPort) },
                 new string[] { string.Format("{0}{1}{2}:{3}", Config.RedisPassword, string.IsNullOrEmpty(Config.RedisPassword) ? "" : "@", Config.RedisServer, Config.RedisPort) },
-                config,
+                Config.ServiceStackRedisConfig,
                 dbIndex,
                 null,
                 null);

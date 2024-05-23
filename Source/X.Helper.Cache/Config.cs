@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ServiceStack.Redis;
+using StackExchange.Redis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,19 +10,43 @@ namespace X.Helper.Cache
 {
     public static class Config
     {
+        static Config()
+        {
+            //静态构造初始化配置
 
+            ServiceStackRedisConfig = new RedisClientManagerConfig
+            {
+                MaxReadPoolSize = 100,
+                MaxWritePoolSize = 100,
+                AutoStart = true,
+            };
+
+            StackExchangeRedisConfig = new ConfigurationOptions
+            {
+                EndPoints = { $"{RedisServer}:{RedisPort}" },
+                Password = RedisPassword, // 如果有密码
+                AbortOnConnectFail = false,
+                ConnectRetry = 3,
+                SyncTimeout = 5000,
+                AsyncTimeout = 5000,
+                ConnectTimeout = 5000,
+            };
+        }
+
+        #region 公共配置
         private static double _DefaultTimeout = 20;
         /// <summary>
         /// 默认过期时间（分钟）
         /// </summary>
-        public static double DefaultTimeout {
+        public static double DefaultTimeout
+        {
             get
             {
                 return _DefaultTimeout;
             }
             set
             {
-                if(value < -1)
+                if (value < -1)
                     throw new ArgumentOutOfRangeException("DefaultTimeout", new Exception("不能设置小于-1的过期时间"));
                 _DefaultTimeout = value;
             }
@@ -41,6 +67,9 @@ namespace X.Helper.Cache
                 _DefaultDatabaseIndex = index;
             }
         }
+        #endregion
+
+        #region RedisServer连接配置
 
 #if NET461
         private static readonly string RedisServerConfigName = "RedisServer";
@@ -111,16 +140,16 @@ namespace X.Helper.Cache
             set { _RedisPassword = value; }
         }
 
+        #endregion
+
         #region ServiceStack.Redis
-        /// <summary>
-        /// 最大读取池大小
-        /// </summary>
-        public static int MaxReadPoolSize { get; set; } = 100;
-        /// <summary>
-        /// 最大写入池大小
-        /// </summary>
-        public static int MaxWritePoolSize { get; set; } = 100;
-        public static bool AutoStart { get; set; } = true;
+
+        public static readonly RedisClientManagerConfig ServiceStackRedisConfig;
+
+        #endregion
+
+        #region StackExchange.Redis
+        public static readonly ConfigurationOptions StackExchangeRedisConfig;
         #endregion
     }
 }
