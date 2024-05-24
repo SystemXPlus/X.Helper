@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 #if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
 using Microsoft.Extensions.Configuration;
+using X.Helper.Common.Interface;
 #endif
 
 namespace X.Helper.Common.Implement
@@ -35,8 +36,21 @@ namespace X.Helper.Common.Implement
         {
             var result = GetAppsetting(key);
             if(string.IsNullOrEmpty(result))
-                return defaultValue;
+                result = defaultValue;
             return result;
+        }
+
+        public T GetAppsetting<T>(string key) where T : class, new()
+        {
+            T result = new T();
+            configuration.Bind(key, result);
+            return result;
+        }
+
+        public T GetAppsetting<T>(string key, T defaultValue) where T : class, new()
+        {
+            configuration.Bind(key, defaultValue);
+            return defaultValue;
         }
     }
 #endif

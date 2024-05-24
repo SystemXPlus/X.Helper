@@ -11,5 +11,10 @@ namespace X.Helper.Common.Interface
         string GetAppsetting(string key);
         string GetAppsetting(string key, string defaultValue);
 
+
+        T GetAppsetting<T>(string key) where T : class, new();
+
+        T GetAppsetting<T>(string key, T defaultValue) where T : class, new();
+
     }
 }

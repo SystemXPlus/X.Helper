@@ -20,8 +20,19 @@ namespace X.Helper.Common.Implement
         {
             var result = GetAppsetting(key);
             if(string.IsNullOrEmpty(result))
-                return defaultValue;
+                result = defaultValue;
             return result;
+        }
+
+        [Obsolete("Web.Config/App.Config don't support reading appsetting to entity", true)]
+        public T GetAppsetting<T>(string key) where T : class, new()
+        {
+            throw new NotImplementedException();
+        }
+        [Obsolete("Web.Config/App.Config don't support reading appsetting to entity", true)]
+        public T GetAppsetting<T>(string key, T defaultValue) where T : class, new()
+        {
+            throw new NotImplementedException();
         }
     }
 #endif
