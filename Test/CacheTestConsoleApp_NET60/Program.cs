@@ -8,7 +8,7 @@ namespace CacheTestConsoleApp_NET60
         static void TestMethod()
         {
             //TODO TEST METHOD
-
+            Cache.ServiceStackRedisHelperTest.Test();
         }
 
         #region Main with stopwatch

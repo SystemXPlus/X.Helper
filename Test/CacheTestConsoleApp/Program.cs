@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CacheTestConsoleApp
+namespace CacheTestConsoleApp_NET461
 {
     internal class Program
     {
         static void TestMethod()
         {
             //TODO TEST METHOD
-
+            Cache.ServiceStackRedisHelperTest.Test();
         }
 
         #region Main with stopwatch

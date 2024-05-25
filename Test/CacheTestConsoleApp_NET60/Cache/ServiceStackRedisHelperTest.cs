@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestConsoleApp_NET60.Cache
+namespace CacheTestConsoleApp_NET60.Cache
 {
     public static class ServiceStackRedisHelperTest
     {

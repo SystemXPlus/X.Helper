@@ -91,9 +91,10 @@ namespace X.Helper.Cache
 
         public bool SetValue<T>(string key, T obj, double? timeout = null) where T : class
         {
-            TimeSpan? expiry = null ;
-            if (timeout != null)
-                expiry = TimeSpan.FromMinutes(timeout.Value);
+            TimeSpan? expiry = null;
+            if (timeout == null)
+                timeout = TIMEOUT;
+            expiry = TimeSpan.FromMinutes(timeout.Value);
             if (obj is string || obj.GetType().IsValueType)
             {
                 return Database.StringSet(key, obj?.ToString(), expiry);
@@ -111,7 +112,7 @@ namespace X.Helper.Cache
                 return;
             var tmpdic = new Dictionary<RedisKey, RedisValue>();
             int i = 0;
-            foreach(var item in dic)
+            foreach (var item in dic)
             {
                 string key = item.Key;
                 string value;

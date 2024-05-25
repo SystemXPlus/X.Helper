@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B1C17102-CE21-45A8-9AF1-B7577D6D7315}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>CacheTestConsoleApp</RootNamespace>
-    <AssemblyName>CacheTestConsoleApp</AssemblyName>
+    <RootNamespace>CacheTestConsoleApp_NET461</RootNamespace>
+    <AssemblyName>CacheTestConsoleApp_NET461</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,11 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\ServiceStackRedisHelperTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Source\X.Helper.Cache\X.Helper.Cache.csproj">
+      <Project>{b06475b3-fcc2-4da8-b143-d58deb0ee575}</Project>
+      <Name>X.Helper.Cache</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
