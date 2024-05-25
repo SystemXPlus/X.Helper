@@ -8,7 +8,7 @@ namespace TestConsoleApp_NET60
         static void TestMethod()
         {
             //TODO TEST METHOD
-            Common.ConfigHelperTest.Test();
+            //Common.ConfigHelperTest.Test();
             //Cache.ServiceStackRedisHelperTest.Test();
 
         }

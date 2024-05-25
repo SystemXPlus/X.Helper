@@ -18,6 +18,8 @@ namespace TestConsoleApp_NET60.Common
             Console.WriteLine(str3);
             var str4 = X.Helper.Common.ConfigHelper.GetAppsetting("testmodel");
             Console.WriteLine(str4);
+            var str5 = X.Helper.Common.ConfigHelper.GetAppsetting("testmodel", "abc");
+            Console.WriteLine(str5);
 
             var setting = X.Helper.Common.ConfigHelper.GetAppsetting<AppsettingModel>("testmodel", new AppsettingModel { Name = "Tom", Age = 16, Sex = false });
             var setting2 = X.Helper.Common.ConfigHelper.GetAppsetting<AppsettingModel>("testmodel", new AppsettingModel { Name = "Tom", Age = 16, Sex = false });
