@@ -59,6 +59,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+		<PackageReference Include="X.Helper" Version="1.0.5" />
 		<PackageReference Include="X.Helper.Common" Version="1.0.2" />
 	</ItemGroup>
 </Project>

@@ -66,19 +66,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\X.Helper.Cache\X.Helper.Cache.csproj">
+    <ProjectReference Include="..\..\Source\X.Helper.Cache\X.Helper.Cache.csproj">
       <Project>{b06475b3-fcc2-4da8-b143-d58deb0ee575}</Project>
       <Name>X.Helper.Cache</Name>
     </ProjectReference>
-    <ProjectReference Include="..\X.Helper.Common\X.Helper.Common.csproj">
+    <ProjectReference Include="..\..\Source\X.Helper.Common\X.Helper.Common.csproj">
       <Project>{ed14a8a6-8103-4fa0-a2b5-742ba210f75b}</Project>
       <Name>X.Helper.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\X.Helper.Extension\X.Helper.Extension.csproj">
+    <ProjectReference Include="..\..\Source\X.Helper.Extension\X.Helper.Extension.csproj">
       <Project>{b87163fe-8186-4256-8b53-66d18e615753}</Project>
       <Name>X.Helper.Extension</Name>
     </ProjectReference>
-    <ProjectReference Include="..\X.Helper\X.Helper.csproj">
+    <ProjectReference Include="..\..\Source\X.Helper\X.Helper.csproj">
       <Project>{02399ae0-7b1d-462f-b10c-3228eeb032b3}</Project>
       <Name>X.Helper</Name>
     </ProjectReference>

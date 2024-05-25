@@ -51,7 +51,11 @@ namespace X.Helper.Cache
                     }
                 }
             }
-        } 
+        }
+        #endregion
+
+        #region PRIVATE
+
         #endregion
 
         #region Inherit from ICacheHelper
@@ -59,11 +63,6 @@ namespace X.Helper.Cache
         public long DbIndex
         {
             get { return _DbIndex; }
-        }
-
-        public bool ExistsKey(string key)
-        {
-            throw new NotImplementedException();
         }
 
         public ICacheHelper GetDatabase(long? index = null)
@@ -83,6 +82,53 @@ namespace X.Helper.Cache
             }
             return DbCache[dbIndex];
         }
+
+        public bool ExistsKey(string key)
+        {
+            return Database.KeyExists(key);
+        }
+
+
+        public bool SetValue<T>(string key, T obj, double? timeout = null) where T : class
+        {
+            TimeSpan? expiry = null ;
+            if (timeout != null)
+                expiry = TimeSpan.FromMinutes(timeout.Value);
+            if (obj is string || obj.GetType().IsValueType)
+            {
+                return Database.StringSet(key, obj?.ToString(), expiry);
+            }
+            else
+            {
+                var str = X.Helper.Json.Serialize(obj);
+                return Database.StringSet(key, str, expiry);
+            }
+        }
+
+        public void SetValue<T>(IDictionary<string, T> dic) where T : class
+        {
+            if (dic == null || dic.Count == 0)
+                return;
+            var tmpdic = new Dictionary<RedisKey, RedisValue>();
+            int i = 0;
+            foreach(var item in dic)
+            {
+                string key = item.Key;
+                string value;
+                if (item.Value is string || item.Value.GetType().IsValueType)
+                {
+                    value = item.Value.ToString();
+                }
+                else
+                {
+                    value = X.Helper.Json.Serialize(item.Value);
+                }
+                tmpdic.Add(key, value);
+                i++;
+            }
+            Database.StringSet(tmpdic.ToArray());
+        }
+
 
         public T GetValue<T>(string key) where T : class
         {
@@ -104,15 +150,6 @@ namespace X.Helper.Cache
             throw new NotImplementedException();
         }
 
-        public bool SetValue<T>(string key, T obj, double? timeout = null) where T : class
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetValue<T>(IDictionary<string, T> dic) where T : class
-        {
-            throw new NotImplementedException();
-        }
         #endregion
     }
 }
