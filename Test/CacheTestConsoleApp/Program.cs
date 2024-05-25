@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CacheTestConsoleApp_NET461.Cache;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,7 +13,8 @@ namespace CacheTestConsoleApp_NET461
         static void TestMethod()
         {
             //TODO TEST METHOD
-            Cache.ServiceStackRedisHelperTest.Test();
+            new CacheHelperTest(new X.Helper.Cache.ServiceStackRedisHelper()).Test();
+            new CacheHelperTest(new X.Helper.Cache.StackExchangeRedisHelper()).Test();
         }
 
         #region Main with stopwatch

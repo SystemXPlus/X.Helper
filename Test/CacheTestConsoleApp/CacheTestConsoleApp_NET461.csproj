@@ -43,7 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\CacheHelperTest.cs" />
     <Compile Include="Cache\ServiceStackRedisHelperTest.cs" />
+    <Compile Include="Cache\StackExchangeRedisHelperTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

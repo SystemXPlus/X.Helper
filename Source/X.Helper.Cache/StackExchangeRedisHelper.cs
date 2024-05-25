@@ -97,7 +97,8 @@ namespace X.Helper.Cache
             expiry = TimeSpan.FromMinutes(timeout.Value);
             if (obj is string || obj.GetType().IsValueType)
             {
-                return Database.StringSet(key, obj?.ToString(), expiry);
+                var result =  Database.StringSet(key, obj?.ToString(), expiry);
+                return result;
             }
             else
             {
