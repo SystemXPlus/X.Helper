@@ -15,6 +15,7 @@ namespace CacheTestConsoleApp_NET461
             //TODO TEST METHOD
             new CacheHelperTest(new X.Helper.Cache.ServiceStackRedisHelper()).Test();
             new CacheHelperTest(new X.Helper.Cache.StackExchangeRedisHelper()).Test();
+
         }
 
         #region Main with stopwatch
