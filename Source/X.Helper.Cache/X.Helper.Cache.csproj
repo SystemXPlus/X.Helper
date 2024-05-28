@@ -35,7 +35,7 @@
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net4.6.1'">
 		<PackageReference Include="ServiceStack.Redis">
-			<Version>5.14.0</Version>
+			<Version>3.9.71</Version>
 		</PackageReference>
 	</ItemGroup>
 
