@@ -31,6 +31,13 @@ namespace X.Helper.Cache
         /// <returns></returns>
         bool RemoveKey(string key);
         /// <summary>
+        /// 设置指定KEY过期时间
+        /// </summary>
+        /// <param name="key">KEY</param>
+        /// <param name="expireTime">过期时间（分钟）</param>
+        void SetExpiredTime(string key, long expireTime);
+
+        /// <summary>
         /// 设置指定KEY的对象
         /// </summary>
         /// <typeparam name="T">typeof cache object</typeparam>

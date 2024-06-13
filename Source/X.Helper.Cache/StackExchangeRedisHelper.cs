@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -100,6 +101,12 @@ namespace X.Helper.Cache
         public bool ExistsKey(string key)
         {
             return Database.KeyExists(key);
+        }
+
+
+        public void SetExpiredTime(string key, long expireTime)
+        {
+            Database.KeyExpire(key, DateTime.Now.AddMinutes(expireTime));
         }
 
         /*

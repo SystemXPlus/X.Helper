@@ -145,6 +145,7 @@ namespace X.Helper.Cache
         }
 
 
+
         /// <summary>
         /// 写入内容
         /// </summary>
@@ -259,6 +260,15 @@ namespace X.Helper.Cache
                     return false;
                 }
                 return client.Remove(key);
+            }
+        }
+
+
+        public void SetExpiredTime(string key, long expireTime)
+        {
+            using (var client = NewClient)
+            {
+                client.ExpireEntryAt(key, DateTime.Now.AddMinutes(expireTime));
             }
         }
 
@@ -572,6 +582,7 @@ namespace X.Helper.Cache
                 return null;
             }
         }
+
 
         #endregion
     }

@@ -9,6 +9,26 @@ You may need to purchase a license for this version.
 Please go to https://servicestack.net for more details.
 
 
+### Config File
+
+#### App.Config
+```
+	<appSettings>
+		<add key="RedisServer" value="10.0.0.254"/>	<!--SERVER IP ADDRESS-->
+		<add key="RedisPort" value="6379"/>		<!--SERVER PORT-->
+		<add key="RedisPassword" value=""/>		<!--SERVER PASSWORD-->
+	</appSettings>
+```
+
+#### appsettings.json
+```
+  "cache": {
+    "redisserver": "10.0.0.254",	//SERVER IP ADDRESS
+    "redisport": "6379",		//SERVER PORT
+    "redispassword": ""			//ERVER PASSWORD
+  }
+```
+
 ### General Configration
 
 ```
