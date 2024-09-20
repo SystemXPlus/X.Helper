@@ -63,5 +63,35 @@ public static class ObjectExtension
         }
     }
 
+    /// <summary>
+    /// 获取OBJECT对象中属性为值类型或者字符类型的属性与属性值的键值对，并拼接为URL参数格式的字符串
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public static string CreateUrlQueryString(this object obj)
+    {
+        if (obj == null)
+            return string.Empty;
+        //反射获取序列 
+        var type = obj.GetType();
+        var properties = type.GetProperties();
+        var sb = new StringBuilder();
+        foreach (var property in properties)
+        {
+            var value = property.GetValue(obj)?.ToString();
+            if (value == null)
+                value = string.Empty;
+            if (sb.Length <= 0)
+            {
+                sb.Append($"{property.Name}={value}");
+            }
+            else
+            {
+                sb.Append($"&{property.Name}={value}");
+            }
+        }
+        return sb.ToString();
+    }
+
 }
 
