@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>net4.6.1;netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+	  <Nullable>disable</Nullable>
+	  <ImplicitUsings>disable</ImplicitUsings>
+	  <NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
+	  <SignAssembly>False</SignAssembly>
+	  <Title>X.Helper.Http</Title>
+	  <Authors>SystemX</Authors>
+	  <Owners>607432@qq.com</Owners>
+	  <Copyright>Copyright © SystemX %40 2023</Copyright>
+	  <Version>1.0.2.0</Version>
+	  <AssemblyVersion>$(Version)</AssemblyVersion>
+	  <FileVersion>$(Version)</FileVersion>
+	  <PackageProjectUrl>https://github.com/SystemxPlus/X.Helper</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/SystemxPlus/X.Helper</RepositoryUrl>
+	  <PackageTags>WeChar;HELPER;</PackageTags>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <Description>A useless helper class</Description>
+	  <PackageIcon>ICON.jpg</PackageIcon>
+	  <PackageReadmeFile>README_X.Helper.Http.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <None Include="..\..\ICON.jpg">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\README_X.Helper.Http.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+	  </None>
+  </ItemGroup>
+
+</Project>
