@@ -32,5 +32,8 @@
 		  <PackagePath>\</PackagePath>
 	  </None>
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net4.6.1'">
+	  <Reference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
 
 </Project>

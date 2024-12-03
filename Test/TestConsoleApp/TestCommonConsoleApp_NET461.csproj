@@ -78,6 +78,10 @@
       <Project>{b87163fe-8186-4256-8b53-66d18e615753}</Project>
       <Name>X.Helper.Extension</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Source\X.Helper.Http\X.Helper.Http.csproj">
+      <Project>{beb68800-1e73-41e7-aeb6-bd37aff83585}</Project>
+      <Name>X.Helper.Http</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Source\X.Helper\X.Helper.csproj">
       <Project>{02399ae0-7b1d-462f-b10c-3228eeb032b3}</Project>
       <Name>X.Helper</Name>

@@ -14,7 +14,9 @@ namespace TestConsoleApp
         {
             //TODO TEST METHOD
             //Common.ConfigHelper.Test();
-            Cache.ServiceStackRedisHelperTest.Test();
+            //Cache.ServiceStackRedisHelperTest.Test();
+            var method = X.Helper.Http.Enums.HttpMethod.POST;
+            Console.WriteLine(method.ToString());
         }
 
         #region Main with stopwatch
