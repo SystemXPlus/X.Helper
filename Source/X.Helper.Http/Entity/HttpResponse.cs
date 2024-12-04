@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,13 +35,22 @@ namespace X.Helper.Http.Entity
         /// HTTP RESPONSE CONTENT
         /// </summary>
         public string Content { get; set; }
-        /// <summary>
-        /// HTTP RESPONSE HEADERS DICTIONARY
-        /// </summary>
-        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
+        public string Cookie {  get; set; }
         /// <summary>
         /// HTTP RESPONSE COOKIES DICTIONARY
         /// </summary>
-        public Dictionary<string, string> Cookies { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> CookiesDictionary { get; set; } = new Dictionary<string, string>();
+        /// <summary>
+        /// COOKIE COLLECTION
+        /// </summary>
+        public CookieCollection CookieCollection { get; set; }
+        /// <summary>
+        /// HTTP RESPONSE HEADERS DICTIONARY
+        /// </summary>
+        public Dictionary<string, string> HeadersDictionary { get; set; } = new Dictionary<string, string>();
+        /// <summary>
+        /// HEADERS CONNECTION
+        /// </summary>
+        public WebHeaderCollection WebHeadersCollection { get; set; }
     }
 }
