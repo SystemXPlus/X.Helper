@@ -22,6 +22,7 @@ namespace X.Helper.Http
             {
                 System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls;
             }
+            
             using (HttpContent httpContent = new StringContent(content, Encoding.UTF8, "application/json"))
             {
                 using (HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, url))

@@ -10,6 +10,11 @@ namespace X.Helper.Http.Helper
 {
     internal class CookieHelper
     {
+        /// <summary>
+        /// 从COOKIE字典中获取拼接后的COOKIE字符串
+        /// </summary>
+        /// <param name="cookies"></param>
+        /// <returns></returns>
         public string GetCookieStr(Dictionary<string, string> cookies)
         {
             if (cookies == null || cookies.Count == 0) return string.Empty;
@@ -21,6 +26,11 @@ namespace X.Helper.Http.Helper
             return result;
         }
 
+        /// <summary>
+        /// 从COOKIE集合中获取拼接后的COOKIE字符串
+        /// </summary>
+        /// <param name="cookies"></param>
+        /// <returns></returns>
         public string GetCookieStr(CookieCollection cookies)
         {
             if (cookies == null || cookies.Count == 0) return string.Empty;
@@ -31,7 +41,11 @@ namespace X.Helper.Http.Helper
             }
             return result;
         }
-
+        /// <summary>
+        /// 从COOKIE集合中获取整理后的COOKIE字典
+        /// </summary>
+        /// <param name="cookies"></param>
+        /// <returns></returns>
         public Dictionary<string, string> GetCookieDicrionary(CookieCollection cookies)
         {
             var result = new Dictionary<string, string>();
@@ -44,7 +58,11 @@ namespace X.Helper.Http.Helper
             }
             return result;
         }
-
+        /// <summary>
+        /// 从COOKIE字符串里获取整理后的COOKIE字典
+        /// </summary>
+        /// <param name="cookies"></param>
+        /// <returns></returns>
         public Dictionary<string, string> GetCookieDictionary(string cookies)
         {
             var result = new Dictionary<string, string>();
@@ -74,7 +92,11 @@ namespace X.Helper.Http.Helper
             }
             return result;
         }
-
+        /// <summary>
+        /// 从COOKIE字典转换为COOKIE集合
+        /// </summary>
+        /// <param name="cookies"></param>
+        /// <returns></returns>
         public CookieCollection GetCookieCollection(Dictionary<string, string> cookies)
         {
             var result = new CookieCollection();
@@ -87,6 +109,11 @@ namespace X.Helper.Http.Helper
             }
             return result;
         }
+        /// <summary>
+        /// 从HTTPHEADERS中提取COOKIE集合
+        /// </summary>
+        /// <param name="headers"></param>
+        /// <returns></returns>
         public CookieCollection GetCookieCollection(HttpHeaders headers)
         {
             var result = new CookieCollection();

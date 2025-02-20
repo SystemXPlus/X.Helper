@@ -10,17 +10,21 @@ namespace X.Helper.Http.Entity
     {
         public string URL { get; set; }
         public string Referer { get; set; }
+        public string Origin { get; set; }
         public Enums.HttpMethod Method { get; set; }
 
+        public object Body { get; set; }
+
+        private string _ContentType = null;
         public string ContentType
         {
             get
             {
-                return Common.GetDictionaryValueByKey(Headers, "Content-Type");
+                return _ContentType;
             }
             set
             {
-                Common.SetDictionaryValueByKey(Headers, "Content-Type", value);
+                _ContentType = value;
             }
         }
         public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();

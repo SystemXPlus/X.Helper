@@ -15,7 +15,7 @@
 	  <FileVersion>$(Version)</FileVersion>
 	  <PackageProjectUrl>https://github.com/SystemxPlus/X.Helper</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/SystemxPlus/X.Helper</RepositoryUrl>
-	  <PackageTags>WeChar;HELPER;</PackageTags>
+	  <PackageTags>HTTP;HELPER;</PackageTags>
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <Description>A useless helper class</Description>
 	  <PackageIcon>ICON.jpg</PackageIcon>
