@@ -22,6 +22,7 @@ namespace X.Helper.Http
         private Encoding Encoding { get; set; } = Encoding.UTF8;
         private IPEndPoint IPEndPoint { get; set; } = null;
 
+        private Version Version { get; set; } = HttpVersion.Version11;
 
         private TimeSpan TimeOut = TimeSpan.FromSeconds(100.0);
 

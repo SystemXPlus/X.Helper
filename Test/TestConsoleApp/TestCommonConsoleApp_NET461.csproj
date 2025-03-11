@@ -59,6 +59,7 @@
     <Compile Include="Extension\StreamExtensionTest.cs" />
     <Compile Include="Extension\StringExtensionTest.cs" />
     <Compile Include="Extension\TExtensionTest.cs" />
+    <Compile Include="Http\HttpTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
