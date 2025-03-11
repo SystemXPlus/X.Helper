@@ -9,6 +9,29 @@ namespace X.Helper.Http
 {
     public partial class Client
     {
+        public Client SetMethod(Enums.HttpMethod method)
+        {
+            this.Method = method;
+            return this;
+        }
+
+        public Client SetUri(Uri uri)
+        {
+            this.Uri = uri;
+            return this;
+        }
+
+        public Client SetUri(string uri)
+        {
+            this.Uri = new Uri(uri);
+            return this;
+        }
+
+        public Client SetIPEndPoint(IPEndPoint ipEndPoint)
+        {
+            this.IPEndPoint = ipEndPoint;
+            return this;
+        }
 
         #region COOKIE
         public Client SetCookie(string name, string value)
@@ -113,14 +136,6 @@ namespace X.Helper.Http
             TimeOut = TimeSpan.FromSeconds(second);
             return this;
         }
-
-        #region PROXY
-        public Client UseProxy(string host)
-        {
-            //TODO
-            return this;
-        } 
-        #endregion
 
     }
 }

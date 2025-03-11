@@ -9,47 +9,46 @@ namespace X.Helper.Http
 {
     public partial class Client
     {
-        private static readonly HttpClient _HttpClient = new HttpClient();
-        private HttpClient _CustomClient = null;
-        private HttpClient HttpClient
-        {
-            get
-            {
-                if(_CustomClient == null)
-                {
-                    lock (this)
-                    {
-                        if(_CustomClient == null)
-                        {
-                            _CustomClient = _HttpClient;
-                        }
-                    }
-                }
-                return _CustomClient;
-            }
-        }
+        private readonly HttpClient _HttpClient;
+
         private CookieContainer cookieContainer;
 
-        private string URL { get; set; }
+        private Uri Uri { get; set; }
         private Enums.HttpMethod Method { get; set; } = Enums.HttpMethod.GET;
         private string Referer { get; set; }
         private string Origin { get; set; }
         private string UserAgent { get; set; } = "X.Helper.Http.Client";
         private string ContentType { get; set; }
         private Encoding Encoding { get; set; } = Encoding.UTF8;
+        private IPEndPoint IPEndPoint { get; set; } = null;
 
 
         private TimeSpan TimeOut = TimeSpan.FromSeconds(100.0);
 
-        public Client(string url)
+
+        public Client():this(handler: null)
         {
-            this.URL = url;
-        }
-        public Client (Uri uri)
-        {
-            this.URL = uri.ToString();
+            
         }
 
+        public Client(HttpMessageHandler handler)
+        {
+            if (handler != null)
+            {
+                _HttpClient = new HttpClient(handler);
+            }
+            else
+            {
+                _HttpClient = new HttpClient();
+            }
+        }
+
+
+        #region FUNCTION
+
+        public string Get
+
+        #endregion
 
 
     }
