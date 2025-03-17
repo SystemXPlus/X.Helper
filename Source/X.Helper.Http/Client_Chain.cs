@@ -27,6 +27,12 @@ namespace X.Helper.Http
             return this;
         }
 
+        public Client SetKeepAlive(bool keepAlive)
+        {
+            this.KeepAlive = keepAlive;
+            return this;
+        }
+
         public Client SetIPEndPoint(IPEndPoint ipEndPoint)
         {
             this.IPEndPoint = ipEndPoint;
