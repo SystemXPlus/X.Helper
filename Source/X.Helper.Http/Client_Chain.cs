@@ -139,7 +139,13 @@ namespace X.Helper.Http
 
         public Client SetTimeout(int second)
         {
-            TimeOut = TimeSpan.FromSeconds(second);
+            Timeout = TimeSpan.FromSeconds(second);
+            return this;
+        }
+
+        public Client SetTimeout(TimeSpan timeSpan)
+        {
+            Timeout = timeSpan;
             return this;
         }
 

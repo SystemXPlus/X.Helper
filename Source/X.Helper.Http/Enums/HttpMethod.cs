@@ -13,6 +13,8 @@ namespace X.Helper.Http.Enums
         POST,
         PUT,
         DELETE,
+        HEAD,
         OPTIONS,
+        TRACE,
     }
 }

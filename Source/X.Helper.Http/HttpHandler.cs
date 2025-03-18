@@ -18,6 +18,8 @@ namespace X.Helper.Http
 
         private bool _UserCookieContainer = false;
 
+        public HttpClientHandler Handler => _HttpHandler;
+
         public HttpHandler() : this(null)
         {
 
