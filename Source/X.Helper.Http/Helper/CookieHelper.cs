@@ -93,6 +93,16 @@ namespace X.Helper.Http.Helper
             return result;
         }
         /// <summary>
+        /// 从COOKIE字符串里获取整理后的COOKIE集合
+        /// </summary>
+        /// <param name="cookies"></param>
+        /// <returns></returns>
+        public CookieCollection GetCookieDictionary(string cookies)
+        {
+            //TODO
+            return null;
+        }
+        /// <summary>
         /// 从COOKIE字典转换为COOKIE集合
         /// </summary>
         /// <param name="cookies"></param>

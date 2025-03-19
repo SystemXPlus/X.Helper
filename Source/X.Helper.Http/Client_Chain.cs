@@ -40,50 +40,109 @@ namespace X.Helper.Http
         }
 
         #region COOKIE
+        public Client ClearCookies()
+        {
+#if NET6_0_OR_GREATER
+                this.CookieCollection.Clear();
+#else
+            this.CookieCollection = new CookieCollection();
+#endif
+            return this;
+        }
         public Client SetCookie(string name, string value)
         {
-            //TODO
+            if(!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
+                this.CookieCollection.Add(new Cookie(name, value));
             return this;
         }
         public Client SetCookie(CookieCollection cookies)
         {
-            //TODO 将COOKIE添加到COOKIECONTAINER
+            if(cookies != null)
+            {
+                foreach (Cookie cookie in cookies)
+                {
+                    this.CookieCollection.Add(cookie);
+                }
+            }
             return this;
         }
 
         public Client SetCookie(Dictionary<string, string> cookies)
         {
-            //TODO
-            return this;
-        }
-        public Client AddCookie(string name, string value)
-        {
-            //TODO 
-            return this;
-        }
-
-        public Client AddCookie(CookieCollection cookies)
-        {
-            //TODO 将COOKIE添加到COOKIECONTAINER
-            return this;
-        }
-
-        public Client AddCookie(Dictionary<string, string> cookies)
-        {
-            //TODO
+            if(cookies != null)
+            {
+                foreach (var item in cookies)
+                {
+                    this.CookieCollection.Add(new Cookie(item.Key, item.Value));
+                }
+            }
             return this;
         }
         #endregion
 
         #region HEADER
-        public Client AddHeader(string name, string value)
+        /// <summary>
+        /// 设置全局请求头
+        /// <para>在当前实例的所有请求中均会携带该请求头</para>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public Client SetDefaultRequestHeaders(string name, string value)
         {
-            //TODO
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
+            {
+                if (this._HttpClient.DefaultRequestHeaders.Contains(name))
+                    this._HttpClient.DefaultRequestHeaders.Remove(name);
+                this._HttpClient.DefaultRequestHeaders.Add(name, value);
+            }
             return this;
         }
-        public Client AddHeader(Dictionary<string, string> headers)
+        /*
+         * 
+         * //TODO
+         * 因为RequestMessage是在发起请求时才创建的，
+         * 所以在设置请求头时要创建一个私有对象来存储请求头，
+         * 在创建RequestMessage时再将请求头添加到RequestMessage中
+         * 
+         * */
+        /// <summary>
+        /// 设置请求头
+        /// <para>如果请求头已存在则覆盖</para>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public Client SetHeader(string name, string value)
         {
-            //TODO
+            if(!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
+            {
+                if(this.RequestMessage.Headers.Contains(name))
+                    this.RequestMessage.Headers.Remove(name);
+                this.RequestMessage.Headers.Add(name, value);
+            }
+            return this;
+        }
+        /// <summary>
+        /// 设置请求头
+        /// <para>如果请求头已存在则覆盖</para>
+        /// </summary>
+        /// <param name="headers"></param>
+        /// <returns></returns>
+        public Client SetHeader(Dictionary<string, string> headers)
+        {
+            if(headers != null)
+            {
+                foreach (var item in headers)
+                {
+                    if (!string.IsNullOrEmpty(item.Key) && !string.IsNullOrEmpty(item.Value))
+                    {
+                        if (this.RequestMessage.Headers.Contains(item.Key))
+                            this.RequestMessage.Headers.Remove(item.Key);
+                        this.RequestMessage.Headers.Add(item.Key, item.Value);
+                    }
+                }
+            }
             return this;
         }
 

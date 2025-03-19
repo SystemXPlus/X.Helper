@@ -14,7 +14,7 @@ namespace X.Helper.Http
         #region 私有字段
         private readonly HttpClient _HttpClient;
 
-        private CookieContainer cookieContainer;
+        //private CookieContainer cookieContainer;
 
         private Uri Uri { get; set; }
         private Enums.HttpMethod Method { get; set; } = Enums.HttpMethod.GET;
@@ -25,7 +25,41 @@ namespace X.Helper.Http
         private string ContentType { get; set; }
         private Encoding Encoding { get; set; } = Encoding.UTF8;
 
-        private CookieCollection CookieCollection { get; set; }
+        //使用HttpRequestMessage.Headers处理
+
+        //private WebHeaderCollection _WebHeaderCollection;
+        //private WebHeaderCollection WebHeaderCollection
+        //{
+        //    get
+        //    {
+        //        if (_WebHeaderCollection == null)
+        //        {
+        //            _WebHeaderCollection = new WebHeaderCollection();
+        //        }
+        //        return _WebHeaderCollection;
+        //    }
+        //    set
+        //    {
+        //        _WebHeaderCollection = value;
+        //    }
+        //}
+
+        private CookieCollection _CookieCollection;
+        private CookieCollection CookieCollection
+        {
+            get
+            {
+                if (_CookieCollection == null)
+                {
+                    _CookieCollection = new CookieCollection();
+                }
+                return _CookieCollection;
+            }
+            set
+            {
+                _CookieCollection = value;
+            }
+        }
 
         /**
          * 在HTTP/1.0中，Keep-Alive功能是默认关闭的，需要在请求头中添加Connection: Keep-Alive来启用。

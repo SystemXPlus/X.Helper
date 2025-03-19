@@ -6,10 +6,18 @@
 - 返回数据类型：文本对象、文件、文本对象文件混合
 - 返回图片？？？
 
+## CPPLOE香囊
+- COOKIEHELPER中增加public CookieCollection GetCookieDictionary(string cookies)
+
 ## 请求参数处理
-- HTTPVERSION 默认1.1 请求HTTPS自动设置为1.0？
+- ~~HTTPVERSION 默认1.1 请求HTTPS自动设置为1.0？~~
+- 请求HEADER处理
+- 请求COOKIE处理
+- 请求携带证书处理
 
 ## 请求返回结果处理
+- 返回COOKIE处理
+- 返回HEADER处理
 - 读取RESPONSE时先读取到STREAM中，再根据CONTENT-TYPE进行处理？
 - 获取返回结果编码，根据编码进行处理？
 - 获取二进制字节，考虑gzip压缩？
