@@ -18,7 +18,10 @@ namespace TestConsoleApp
             //var method = X.Helper.Http.Enums.HttpMethod.POST;
             //Console.WriteLine(method.ToString());
 
-            Http.HttpTest.HttpGetTest();
+            //Http.HttpTest.HttpGetTest();
+            var str = "01-Jan-1970 00:00:01 GMT";
+            DateTime.TryParse(str, out var dt);
+            Console.WriteLine(dt);
         }
 
         #region Main with stopwatch

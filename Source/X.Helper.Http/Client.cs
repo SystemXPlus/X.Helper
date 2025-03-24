@@ -121,6 +121,8 @@ namespace X.Helper.Http
             {
                 if (RequestMessage != null)
                     RequestMessage.Dispose();
+                if(ResponseMessage != null)
+                    ResponseMessage.Dispose();
                 if (_HttpClient != null)
                     _HttpClient.Dispose();
             }
@@ -222,10 +224,18 @@ namespace X.Helper.Http
         {
             result.StatusCode = ResponseMessage.StatusCode;
             result.StatusDescription = ResponseMessage.ReasonPhrase;
-            //result.HeaderCollection = ResponseMessage.Headers;
-            result.Content = await ResponseMessage.Content.ReadAsStringAsync();
             result.ResponseUri = ResponseMessage.RequestMessage.RequestUri.ToString();
-            //result.CookieCollection = cookieContainer.GetCookies(Uri);
+            if (ResponseMessage.Headers != null)
+            {
+                result.HeaderCollection = new WebHeaderCollection();
+                foreach (var item in ResponseMessage.Headers)
+                {
+                    result.HeaderCollection.Add(item.Key, string.Join(";", item.Value));
+                }
+            }
+            result.CookieCollection = Helper.CookieHelper.GetCookieCollection(ResponseMessage.Headers);
+
+            result.Content = await ResponseMessage.Content.ReadAsStringAsync();
 
         }
         #endregion

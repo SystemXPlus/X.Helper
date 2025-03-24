@@ -109,6 +109,7 @@ namespace X.Helper.Http
         /// <summary>
         /// 设置请求头
         /// <para>如果请求头已存在则覆盖</para>
+        /// <para>Referer、User-Agent、Origin、Connection请使用对应Set方法配置</para>
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -126,6 +127,7 @@ namespace X.Helper.Http
         /// <summary>
         /// 设置请求头
         /// <para>如果请求头已存在则覆盖</para>
+        /// <para>Referer、User-Agent、Origin、Connection请使用对应Set方法配置</para>
         /// </summary>
         /// <param name="headers"></param>
         /// <returns></returns>
