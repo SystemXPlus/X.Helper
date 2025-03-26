@@ -183,6 +183,18 @@ namespace X.Helper.Http
             return result;
         }
 
+        public async Task<Result> PostFile(string filePath)
+        {
+            //TODO 上传文件
+            return null;
+        }
+
+        public async Task<Result> DownloadFile()
+        {
+            //TODO 下载文件
+            return null;
+        }
+
         #endregion
 
         #region 创建请求

@@ -66,6 +66,16 @@ namespace X.Helper.Http
             return this;
         }
 
+        /// <summary>
+        /// 设置请求使用的压缩/解压缩方法
+        /// </summary>
+        /// <param name="decompressionMethod"></param>
+        /// <returns></returns>
+        public HttpHandler SetDecompressionMethod(DecompressionMethods decompressionMethod)
+        {
+            this._HttpHandler.AutomaticDecompression = decompressionMethod;
+            return this;
+        }
 
         /// <summary>
         /// 是否自动跟随3xx重定向（默认true）

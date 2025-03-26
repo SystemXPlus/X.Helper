@@ -173,10 +173,34 @@ namespace X.Helper.Http
             this.UserAgent = userAgent;
             return this;
         }
-
+        /// <summary>
+        /// 设置ContentType请求头
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
         public Client SetContentType(string contentType)
         {
-            //TODO
+            this.RequestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+            return this;
+        }
+        /// <summary>
+        /// 设置Accept请求头
+        /// </summary>
+        /// <param name="accept"></param>
+        /// <returns></returns>
+        public Client SetAccept(string accept)
+        {
+            if(string.IsNullOrEmpty(accept))
+                return this;
+            var acceptArr = accept.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            if(null == acceptArr || acceptArr.Length == 0)
+                return this;
+            if (this.RequestMessage.Headers.Accept.Count > 0)
+                this.RequestMessage.Headers.Accept.Clear();
+            foreach (var item in acceptArr)
+            {
+                this.RequestMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(accept));
+            }
             return this;
         }
 
