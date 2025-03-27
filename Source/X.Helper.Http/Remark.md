@@ -11,6 +11,8 @@
 
 ## 请求参数处理
 - ~~HTTPVERSION 默认1.1 请求HTTPS自动设置为1.0？~~
+- 20250327 Client增加将HttpResponseMessage中的Content读取到Result的StreamContent（MemoryStream）中的方法
+后续所有内容都在StreamContent基础上操作，最后再根据CONTENT-TYPE进行处理
 - 请求HEADER处理
 - 请求COOKIE处理
 - 请求携带证书处理

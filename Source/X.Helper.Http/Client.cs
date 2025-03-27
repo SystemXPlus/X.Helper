@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Security;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -76,6 +77,8 @@ namespace X.Helper.Http
 
         private HttpRequestMessage RequestMessage { get; set; }
         private HttpResponseMessage ResponseMessage { get; set; }
+
+        private bool DetectEncodingFromByteOrderMarks = false;
         #endregion
 
         #region 构造
@@ -121,7 +124,7 @@ namespace X.Helper.Http
             {
                 if (RequestMessage != null)
                     RequestMessage.Dispose();
-                if(ResponseMessage != null)
+                if (ResponseMessage != null)
                     ResponseMessage.Dispose();
                 if (_HttpClient != null)
                     _HttpClient.Dispose();
@@ -189,6 +192,24 @@ namespace X.Helper.Http
             return null;
         }
 
+        public async Task<Result> PostFile(string filePath, IProgress<double> progress)
+        {
+            //TODO 上传文件
+            return null;
+        }
+
+        public async Task<Result> PostFile(byte[] bytes)
+        {
+            //TODO 上传文件
+            return null;
+        }
+
+        public async Task<Result> PostFile(byte[] bytes, IProgress<double> progress)
+        {
+            //TODO 上传文件
+            return null;
+        }
+
         public async Task<Result> DownloadFile()
         {
             //TODO 下载文件
@@ -247,8 +268,39 @@ namespace X.Helper.Http
             }
             result.CookieCollection = Helper.CookieHelper.GetCookieCollection(ResponseMessage.Headers);
 
-            result.Content = await ResponseMessage.Content.ReadAsStringAsync();
+            using (var stream = await ResponseMessage.Content.ReadAsStreamAsync())
+            {
+                if (result.StreamContent == null)
+                {
+                    result.StreamContent = new System.IO.MemoryStream();
+                }
+                await stream.CopyToAsync(result.StreamContent);
+                await result.StreamContent.FlushAsync();
+            }
+        }
 
+        private async Task GetTextContent(Result result)
+        {
+            if (result.StreamContent == null)
+                return;
+            using (var reader = new System.IO.StreamReader(result.StreamContent, Encoding, this.DetectEncodingFromByteOrderMarks))
+            {
+                result.TextContent = await reader.ReadToEndAsync();
+            }
+            result.StreamContent.Position = 0;
+        }
+
+        private async Task GetStreamContent(Result result)
+        {
+            using (var stream = await ResponseMessage.Content.ReadAsStreamAsync())
+            {
+                if (result.StreamContent == null)
+                {
+                    result.StreamContent = new System.IO.MemoryStream();
+                }
+                await stream.CopyToAsync(result.StreamContent);
+                await result.StreamContent.FlushAsync();
+            }
         }
         #endregion
 

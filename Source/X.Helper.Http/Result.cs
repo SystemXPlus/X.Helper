@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -22,13 +23,23 @@ namespace X.Helper.Http
 
 
         /// <summary>
-        /// 返回正文
+        /// 返回文本内容
         /// </summary>
-        public string Content { get; set; }
+        internal string TextContent { get; set; }
+        /// <summary>
+        /// 返回二进制流内容
+        /// </summary>
+        public Stream StreamContent { get; set; }
         /// <summary>
         /// 返回正文
         /// </summary>
-        public string Html { get { return Content; } }
+        public string Content
+        {
+            get
+            {
+                return TextContent;
+            }        
+         }
         /// <summary>
         /// 返回二进制字节数组
         /// </summary>
@@ -37,6 +48,16 @@ namespace X.Helper.Http
         public string ResponseUri { get;  set; }
 
         public string RedirectUrl { get; set; }
+        /// <summary>
+        /// 请求是否成功
+        /// </summary>
+        public bool IsSuccess
+        {
+            get
+            {
+                return this.StatusCode >= HttpStatusCode.OK && this.StatusCode < HttpStatusCode.Ambiguous;
+            }
+        }
 
         //public string RedirectUrl
         //{

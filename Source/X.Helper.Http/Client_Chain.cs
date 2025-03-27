@@ -233,6 +233,16 @@ namespace X.Helper.Http
             Timeout = timeSpan;
             return this;
         }
+        /// <summary>
+        /// 是否自动检测文件/文本的字节顺序标记（Byte Order Mark，简称BOM），从而确定文件/文本的编码方式。
+        /// </summary>
+        /// <param name="detectEncodingFromByteOrderMarks"></param>
+        /// <returns></returns>
+        public Client SetDetectEncodingFromByteOrderMarks(bool detectEncodingFromByteOrderMarks)
+        {
+            this.DetectEncodingFromByteOrderMarks = detectEncodingFromByteOrderMarks;
+            return this;
+        }
 
     }
 }
