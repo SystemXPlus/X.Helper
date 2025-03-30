@@ -11,8 +11,10 @@ namespace X.Helper.Http
     /// <summary>
     /// 保存请求结果
     /// </summary>
-    public class Result
+    public class Result : IDisposable
     {
+        private bool disposedValue;
+
         public CookieCollection CookieCollection { get; set; }
 
         public WebHeaderCollection HeaderCollection { get; set; }
@@ -26,10 +28,7 @@ namespace X.Helper.Http
         /// 返回文本内容
         /// </summary>
         internal string TextContent { get; set; }
-        /// <summary>
-        /// 返回二进制流内容
-        /// </summary>
-        public Stream StreamContent { get; set; }
+
         /// <summary>
         /// 返回正文
         /// </summary>
@@ -48,6 +47,8 @@ namespace X.Helper.Http
         public string ResponseUri { get;  set; }
 
         public string RedirectUrl { get; set; }
+
+
         /// <summary>
         /// 请求是否成功
         /// </summary>
@@ -57,6 +58,34 @@ namespace X.Helper.Http
             {
                 return this.StatusCode >= HttpStatusCode.OK && this.StatusCode < HttpStatusCode.Ambiguous;
             }
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    
+                }
+
+                // TODO: 释放未托管的资源(未托管的对象)并重写终结器
+                // TODO: 将大型字段设置为 null
+                disposedValue = true;
+            }
+        }
+
+        ~Result()
+        {
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // 不要更改此代码。请将清理代码放入“Dispose(bool disposing)”方法中
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         //public string RedirectUrl

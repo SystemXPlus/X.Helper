@@ -11,35 +11,39 @@ namespace X.Helper.Http
     {
         public Client SetMethod(Enums.HttpMethod method)
         {
-            this.Method = method;
+            this._Method = method;
             return this;
         }
 
         public Client SetUri(Uri uri)
         {
-            this.Uri = uri;
+            this._Uri = uri;
             return this;
         }
 
         public Client SetUri(string uri)
         {
-            this.Uri = new Uri(uri);
+            this._Uri = new Uri(uri);
             return this;
         }
 
         public Client SetKeepAlive(bool keepAlive)
         {
-            this.KeepAlive = keepAlive;
+            this._KeepAlive = keepAlive;
             return this;
         }
 
         public Client SetIPEndPoint(IPEndPoint ipEndPoint)
         {
-            this.IPEndPoint = ipEndPoint;
+            this._IPEndPoint = ipEndPoint;
             return this;
         }
 
         #region COOKIE
+        /// <summary>
+        /// 清除Cookie
+        /// </summary>
+        /// <returns></returns>
         public Client ClearCookies()
         {
 #if NET6_0_OR_GREATER
@@ -49,15 +53,26 @@ namespace X.Helper.Http
 #endif
             return this;
         }
+        /// <summary>
+        /// 设置Cookie
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public Client SetCookie(string name, string value)
         {
-            if(!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
                 this.CookieCollection.Add(new Cookie(name, value));
             return this;
         }
+        /// <summary>
+        /// 设置Cookie
+        /// </summary>
+        /// <param name="cookies"></param>
+        /// <returns></returns>
         public Client SetCookie(CookieCollection cookies)
         {
-            if(cookies != null)
+            if (cookies != null)
             {
                 foreach (Cookie cookie in cookies)
                 {
@@ -66,10 +81,14 @@ namespace X.Helper.Http
             }
             return this;
         }
-
+        /// <summary>
+        /// 设置Cookie
+        /// </summary>
+        /// <param name="cookies"></param>
+        /// <returns></returns>
         public Client SetCookie(Dictionary<string, string> cookies)
         {
-            if(cookies != null)
+            if (cookies != null)
             {
                 foreach (var item in cookies)
                 {
@@ -116,11 +135,11 @@ namespace X.Helper.Http
         /// <returns></returns>
         public Client SetHeader(string name, string value)
         {
-            if(!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
             {
-                if(this.RequestMessage.Headers.Contains(name))
-                    this.RequestMessage.Headers.Remove(name);
-                this.RequestMessage.Headers.Add(name, value);
+                if (this._RequestMessage.Headers.Contains(name))
+                    this._RequestMessage.Headers.Remove(name);
+                this._RequestMessage.Headers.Add(name, value);
             }
             return this;
         }
@@ -133,44 +152,68 @@ namespace X.Helper.Http
         /// <returns></returns>
         public Client SetHeader(Dictionary<string, string> headers)
         {
-            if(headers != null)
+            if (headers != null)
             {
                 foreach (var item in headers)
                 {
                     if (!string.IsNullOrEmpty(item.Key) && !string.IsNullOrEmpty(item.Value))
                     {
-                        if (this.RequestMessage.Headers.Contains(item.Key))
-                            this.RequestMessage.Headers.Remove(item.Key);
-                        this.RequestMessage.Headers.Add(item.Key, item.Value);
+                        if (this._RequestMessage.Headers.Contains(item.Key))
+                            this._RequestMessage.Headers.Remove(item.Key);
+                        this._RequestMessage.Headers.Add(item.Key, item.Value);
                     }
                 }
             }
             return this;
         }
-
+        /// <summary>
+        /// Set Referer Header
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
         public Client SetReferer(Uri uri)
         {
-            this.Referer = uri.ToString();
+            this._Referer = uri.ToString();
             return this;
         }
+        /// <summary>
+        /// Set Referer Header
+        /// </summary>
+        /// <param name="referer"></param>
+        /// <returns></returns>
         public Client SetReferer(string referer)
         {
-            this.Referer = referer;
+            this._Referer = referer;
             return this;
         }
+        /// <summary>
+        /// Set Origin Header
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
         public Client SetOrigin(Uri uri)
         {
-            this.Origin = uri.ToString();
+            this._Origin = uri.ToString();
             return this;
         }
+        /// <summary>
+        /// Set Origin Header
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <returns></returns>
         public Client SetOrigin(string origin)
         {
-            this.Origin = origin;
+            this._Origin = origin;
             return this;
         }
+        /// <summary>
+        /// Set User-Agent
+        /// </summary>
+        /// <param name="userAgent"></param>
+        /// <returns></returns>
         public Client SetUserAgent(string userAgent)
         {
-            this.UserAgent = userAgent;
+            this._UserAgent = userAgent;
             return this;
         }
         /// <summary>
@@ -180,7 +223,7 @@ namespace X.Helper.Http
         /// <returns></returns>
         public Client SetContentType(string contentType)
         {
-            this.RequestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+            this._RequestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
             return this;
         }
         /// <summary>
@@ -190,47 +233,68 @@ namespace X.Helper.Http
         /// <returns></returns>
         public Client SetAccept(string accept)
         {
-            if(string.IsNullOrEmpty(accept))
+            if (string.IsNullOrEmpty(accept))
                 return this;
             var acceptArr = accept.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            if(null == acceptArr || acceptArr.Length == 0)
+            if (null == acceptArr || acceptArr.Length == 0)
                 return this;
-            if (this.RequestMessage.Headers.Accept.Count > 0)
-                this.RequestMessage.Headers.Accept.Clear();
+            if (this._RequestMessage.Headers.Accept.Count > 0)
+                this._RequestMessage.Headers.Accept.Clear();
             foreach (var item in acceptArr)
             {
-                this.RequestMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(accept));
+                this._RequestMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(accept));
             }
             return this;
         }
-
+        /// <summary>
+        /// 设置编码
+        /// </summary>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
         public Client SetEncoding(Encoding encoding)
         {
-            this.Encoding = encoding;
+            this._Encoding = encoding;
             return this;
         }
-
+        /// <summary>
+        /// 设置编码
+        /// </summary>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
         public Client SetEncoding(string encoding)
         {
-            this.Encoding = Encoding.GetEncoding(encoding);
+            this._Encoding = Encoding.GetEncoding(encoding);
             return this;
         }
+        /// <summary>
+        /// 设置编码
+        /// </summary>
+        /// <param name="codepage"></param>
+        /// <returns></returns>
         public Client SetEncoding(int codepage)
         {
-            this.Encoding = Encoding.GetEncoding(codepage);
+            this._Encoding = Encoding.GetEncoding(codepage);
             return this;
         }
         #endregion
-
+        /// <summary>
+        /// 设置超时时间
+        /// </summary>
+        /// <param name="second"></param>
+        /// <returns></returns>
         public Client SetTimeout(int second)
         {
-            Timeout = TimeSpan.FromSeconds(second);
+            _Timeout = TimeSpan.FromSeconds(second);
             return this;
         }
-
+        /// <summary>
+        /// 设置超时时间
+        /// </summary>
+        /// <param name="timeSpan"></param>
+        /// <returns></returns>
         public Client SetTimeout(TimeSpan timeSpan)
         {
-            Timeout = timeSpan;
+            _Timeout = timeSpan;
             return this;
         }
         /// <summary>
@@ -240,7 +304,7 @@ namespace X.Helper.Http
         /// <returns></returns>
         public Client SetDetectEncodingFromByteOrderMarks(bool detectEncodingFromByteOrderMarks)
         {
-            this.DetectEncodingFromByteOrderMarks = detectEncodingFromByteOrderMarks;
+            this._DetectEncodingFromByteOrderMarks = detectEncodingFromByteOrderMarks;
             return this;
         }
 

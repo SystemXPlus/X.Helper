@@ -13,9 +13,14 @@ namespace TestConsoleApp.Http
         {
             var url = "https://www.baidu.com";
             var handler = new X.Helper.Http.HttpHandler();
-            var client = new X.Helper.Http.Client(url, handler.Handler);
-            var result = client.RequestAsync().Result;
-            Console.WriteLine(X.Helper.Json.Serialize(result));
+            using (var client = new X.Helper.Http.Client(url, handler.Handler))
+            {
+                using (var result = client.RequestAsync().Result)
+                {
+                    Console.WriteLine(X.Helper.Json.Serialize(result));
+                }
+            }
+            
         }
     }
 }

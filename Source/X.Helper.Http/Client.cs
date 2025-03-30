@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Security;
@@ -10,21 +11,23 @@ using System.Threading.Tasks;
 
 namespace X.Helper.Http
 {
-    public partial class Client
+    public partial class Client : IDisposable
     {
         #region 私有字段
         private readonly HttpClient _HttpClient;
 
         //private CookieContainer cookieContainer;
 
-        private Uri Uri { get; set; }
-        private Enums.HttpMethod Method { get; set; } = Enums.HttpMethod.GET;
-        private string Referer { get; set; }
-        private string Origin { get; set; }
-        private string UserAgent { get; set; } = "X.Helper.Http.Client";
-        private IPEndPoint IPEndPoint { get; set; } = null;
-        private string ContentType { get; set; }
-        private Encoding Encoding { get; set; } = Encoding.UTF8;
+        private Uri _Uri { get; set; }
+        private Enums.HttpMethod _Method { get; set; } = Enums.HttpMethod.GET;
+        private string _Referer { get; set; }
+        private string _Origin { get; set; }
+        private string _UserAgent { get; set; } = "X.Helper.Http.Client";
+        private IPEndPoint _IPEndPoint { get; set; } = null;
+        private string _ContentType { get; set; }
+        private Encoding _Encoding { get; set; } = Encoding.UTF8;
+
+        private MemoryStream _StreamContent;
 
         //使用HttpRequestMessage.Headers处理
 
@@ -69,16 +72,17 @@ namespace X.Helper.Http
         /// <summary>
         /// 
         /// </summary>
-        private bool KeepAlive { get; set; } = true;
+        private bool _KeepAlive { get; set; } = true;
 
-        private Version Version { get; set; } = HttpVersion.Version11;
+        private Version _Version { get; set; } = HttpVersion.Version11;
 
-        private TimeSpan Timeout = TimeSpan.FromSeconds(100.0);
+        private TimeSpan _Timeout = TimeSpan.FromSeconds(100.0);
 
-        private HttpRequestMessage RequestMessage { get; set; }
-        private HttpResponseMessage ResponseMessage { get; set; }
+        private HttpRequestMessage _RequestMessage { get; set; }
+        private HttpResponseMessage _ResponseMessage { get; set; }
 
-        private bool DetectEncodingFromByteOrderMarks = false;
+        private bool _DetectEncodingFromByteOrderMarks = false;
+
         #endregion
 
         #region 构造
@@ -114,24 +118,44 @@ namespace X.Helper.Http
 
             if (uri != null)
             {
-                this.Uri = uri;
+                this._Uri = uri;
+            }
+        }
+
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    if (_RequestMessage != null)
+                        _RequestMessage.Dispose();
+                    if (_ResponseMessage != null)
+                        _ResponseMessage.Dispose();
+                    if (_HttpClient != null)
+                        _HttpClient.Dispose();
+                }
+
+                // TODO: 释放未托管的资源(未托管的对象)并重写终结器
+                // TODO: 将大型字段设置为 null
+                disposedValue = true;
             }
         }
 
         ~Client()
         {
-            try
-            {
-                if (RequestMessage != null)
-                    RequestMessage.Dispose();
-                if (ResponseMessage != null)
-                    ResponseMessage.Dispose();
-                if (_HttpClient != null)
-                    _HttpClient.Dispose();
-            }
-            catch
-            {
-            }
+            // 不要更改此代码。请将清理代码放入“Dispose(bool disposing)”方法中
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // 不要更改此代码。请将清理代码放入“Dispose(bool disposing)”方法中
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -140,9 +164,9 @@ namespace X.Helper.Http
 
         public async Task<Result> RequestAsync()
         {
-            if (Uri == null)
+            if (_Uri == null)
                 throw new ArgumentNullException("未指定请求的Uri");
-            var url = Uri.ToString();
+            var url = _Uri.ToString();
             if (string.IsNullOrEmpty(url))
                 throw new ArgumentNullException("必填参数：url");
             var tmpUrl = url.ToLower();
@@ -168,7 +192,7 @@ namespace X.Helper.Http
             var result = new Result();
             try
             {
-                using (this.ResponseMessage = await _HttpClient.SendAsync(RequestMessage))
+                using (this._ResponseMessage = await _HttpClient.SendAsync(_RequestMessage))
                 {
 
                     //处理ResponseMessage返回Result
@@ -194,26 +218,26 @@ namespace X.Helper.Http
 
         public async Task<Result> PostFile(string filePath, IProgress<double> progress)
         {
-            //TODO 上传文件
-            return null;
+            //TODO 上传文件 带进度
+            throw new NotImplementedException();
         }
 
         public async Task<Result> PostFile(byte[] bytes)
         {
             //TODO 上传文件
-            return null;
+            throw new NotImplementedException();
         }
 
         public async Task<Result> PostFile(byte[] bytes, IProgress<double> progress)
         {
             //TODO 上传文件
-            return null;
+            throw new NotImplementedException();
         }
 
         public async Task<Result> DownloadFile()
         {
             //TODO 下载文件
-            return null;
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -221,32 +245,32 @@ namespace X.Helper.Http
         #region 创建请求
         private async Task CreateRequestMessage()
         {
-            RequestMessage = new HttpRequestMessage(new HttpMethod(Method.ToString()), Uri);
+            _RequestMessage = new HttpRequestMessage(new HttpMethod(this._Method.ToString()), _Uri);
 
-            if (!string.IsNullOrEmpty(Referer))
-                RequestMessage.Headers.Add("Referer", Referer);
-            if (!string.IsNullOrEmpty(UserAgent))
-                RequestMessage.Headers.Add("User-Agent", UserAgent);
-            if (!string.IsNullOrEmpty(Origin))
-                RequestMessage.Headers.Add("Origin", Origin);
-            RequestMessage.Headers.Add("Connection", KeepAlive ? "Keep-Alive" : "close");
+            if (!string.IsNullOrEmpty(_Referer))
+                _RequestMessage.Headers.Add("Referer", _Referer);
+            if (!string.IsNullOrEmpty(_UserAgent))
+                _RequestMessage.Headers.Add("User-Agent", _UserAgent);
+            if (!string.IsNullOrEmpty(_Origin))
+                _RequestMessage.Headers.Add("Origin", _Origin);
+            _RequestMessage.Headers.Add("Connection", _KeepAlive ? "Keep-Alive" : "close");
 
-            if (Method != Enums.HttpMethod.GET)
+            if (this._Method != Enums.HttpMethod.GET)
             {
-                if (!string.IsNullOrEmpty(ContentType))
-                    ContentType = "text/plain";
-                RequestMessage.Content = new StringContent("", Encoding, ContentType);
+                if (!string.IsNullOrEmpty(_ContentType))
+                    _ContentType = "text/plain";
+                _RequestMessage.Content = new StringContent("", _Encoding, _ContentType);
             }
 
             //增加HTTPS请求的特殊处理，强制使用Http1.0 BY QQ607432
-            if (this.Uri.ToString().StartsWith("https", StringComparison.CurrentCultureIgnoreCase))
+            if (this._Uri.ToString().StartsWith("https", StringComparison.CurrentCultureIgnoreCase))
             {
                 ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback((message, cert, chain, errors) => true);
-                RequestMessage.Version = HttpVersion.Version10;
+                _RequestMessage.Version = HttpVersion.Version10;
             }
             else
             {
-                RequestMessage.Version = Version;
+                _RequestMessage.Version = _Version;
 
             }
         }
@@ -255,51 +279,51 @@ namespace X.Helper.Http
         #region 处理返回结果
         private async Task HandleResponseMessage(Result result)
         {
-            result.StatusCode = ResponseMessage.StatusCode;
-            result.StatusDescription = ResponseMessage.ReasonPhrase;
-            result.ResponseUri = ResponseMessage.RequestMessage.RequestUri.ToString();
-            if (ResponseMessage.Headers != null)
+            result.StatusCode = _ResponseMessage.StatusCode;
+            result.StatusDescription = _ResponseMessage.ReasonPhrase;
+            result.ResponseUri = _ResponseMessage.RequestMessage.RequestUri.ToString();
+            if (_ResponseMessage.Headers != null)
             {
                 result.HeaderCollection = new WebHeaderCollection();
-                foreach (var item in ResponseMessage.Headers)
+                foreach (var item in _ResponseMessage.Headers)
                 {
                     result.HeaderCollection.Add(item.Key, string.Join(";", item.Value));
                 }
             }
-            result.CookieCollection = Helper.CookieHelper.GetCookieCollection(ResponseMessage.Headers);
+            result.CookieCollection = Helper.CookieHelper.GetCookieCollection(_ResponseMessage.Headers);
 
-            using (var stream = await ResponseMessage.Content.ReadAsStreamAsync())
+            using (var stream = await _ResponseMessage.Content.ReadAsStreamAsync())
             {
-                if (result.StreamContent == null)
+                if (this._StreamContent == null)
                 {
-                    result.StreamContent = new System.IO.MemoryStream();
+                    this._StreamContent = new System.IO.MemoryStream();
                 }
-                await stream.CopyToAsync(result.StreamContent);
-                await result.StreamContent.FlushAsync();
+                await stream.CopyToAsync(this._StreamContent);
+                await this._StreamContent.FlushAsync();
             }
         }
 
         private async Task GetTextContent(Result result)
         {
-            if (result.StreamContent == null)
+            if (this._StreamContent == null)
                 return;
-            using (var reader = new System.IO.StreamReader(result.StreamContent, Encoding, this.DetectEncodingFromByteOrderMarks))
+            using (var reader = new System.IO.StreamReader(this._StreamContent, _Encoding, this._DetectEncodingFromByteOrderMarks))
             {
                 result.TextContent = await reader.ReadToEndAsync();
             }
-            result.StreamContent.Position = 0;
+            this._StreamContent.Position = 0;
         }
 
         private async Task GetStreamContent(Result result)
         {
-            using (var stream = await ResponseMessage.Content.ReadAsStreamAsync())
+            using (var stream = await _ResponseMessage.Content.ReadAsStreamAsync())
             {
-                if (result.StreamContent == null)
+                if (this._StreamContent == null)
                 {
-                    result.StreamContent = new System.IO.MemoryStream();
+                    this._StreamContent = new System.IO.MemoryStream();
                 }
-                await stream.CopyToAsync(result.StreamContent);
-                await result.StreamContent.FlushAsync();
+                await stream.CopyToAsync(this._StreamContent);
+                await this._StreamContent.FlushAsync();
             }
         }
         #endregion
