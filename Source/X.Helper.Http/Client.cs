@@ -22,12 +22,32 @@ namespace X.Helper.Http
         private Enums.HttpMethod _Method { get; set; } = Enums.HttpMethod.GET;
         private string _Referer { get; set; }
         private string _Origin { get; set; }
+        /// <summary>
+        /// 请求的UserAgent
+        /// </summary>
         private string _UserAgent { get; set; } = "X.Helper.Http.Client";
+        /// <summary>
+        /// 请求的IP地址
+        /// </summary>
         private IPEndPoint _IPEndPoint { get; set; } = null;
+        /// <summary>
+        /// 请求的ContentType
+        /// </summary>
         private string _ContentType { get; set; }
+        /// <summary>
+        /// 请求编码格式
+        /// </summary>
         private Encoding _Encoding { get; set; } = Encoding.UTF8;
 
         private MemoryStream _StreamContent;
+        /// <summary>
+        /// 待上传文件列表
+        /// </summary>
+        private List<FileInfo> _Files { get; set; } = new List<FileInfo>();
+        /// <summary>
+        /// 下载文件时是否自动创建目录
+        /// </summary>
+        private bool _AutoCreateDirectory { get; set; } = false;
 
         //使用HttpRequestMessage.Headers处理
 
@@ -70,7 +90,9 @@ namespace X.Helper.Http
          * 而在HTTP/1.1中，Keep-Alive功能默认启用，如果需要关闭，则需要在请求头中添加Connection: close‌
          * */
         /// <summary>
-        /// 
+        /// KeepAlive
+        /// <para>在HTTP/1.0中，Keep-Alive功能是默认关闭的，需要在请求头中添加Connection: Keep-Alive来启用。</para>
+        /// <para>而在HTTP/1.1中，Keep-Alive功能默认启用，如果需要关闭，则需要在请求头中添加Connection: close‌</para>
         /// </summary>
         private bool _KeepAlive { get; set; } = true;
 
@@ -121,8 +143,9 @@ namespace X.Helper.Http
                 this._Uri = uri;
             }
         }
+        #endregion
 
-
+        #region DISPOSE
         private bool disposedValue;
 
         protected virtual void Dispose(bool disposing)
@@ -137,6 +160,8 @@ namespace X.Helper.Http
                         _ResponseMessage.Dispose();
                     if (_HttpClient != null)
                         _HttpClient.Dispose();
+                    if (_StreamContent != null)
+                        _StreamContent.Dispose();
                 }
 
                 // TODO: 释放未托管的资源(未托管的对象)并重写终结器
@@ -159,10 +184,14 @@ namespace X.Helper.Http
         }
         #endregion
 
-
         #region 请求
-
-        public async Task<Result> RequestAsync()
+        /// <summary>
+        /// 发起请求前预处理
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        private void PreRequest()
         {
             if (_Uri == null)
                 throw new ArgumentNullException("未指定请求的Uri");
@@ -171,24 +200,22 @@ namespace X.Helper.Http
                 throw new ArgumentNullException("必填参数：url");
             var tmpUrl = url.ToLower();
             if (!tmpUrl.ToLower().StartsWith("http"))
-                throw new ArgumentException("无效参数：url");
+                throw new ArgumentException("无效参数：url，仅支持Http/Https协议");
             if (tmpUrl.StartsWith("https://"))
             {
                 System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls;
             }
+
+            CreateRequestMessage();
+
+        }
+
+        public async Task<Result> RequestAsync()
+        {
+            PreRequest();
+
             Result tmpResult;
-            try
-            {
-                await CreateRequestMessage();
-            }
-            catch (Exception ex)
-            {
-                tmpResult = new Result
-                {
-                    StatusDescription = $"构建请求消息失败：{ex.Message}"
-                };
-                return tmpResult;
-            }
+
             var result = new Result();
             try
             {
@@ -210,40 +237,79 @@ namespace X.Helper.Http
             return result;
         }
 
-        public async Task<Result> PostFile(string filePath)
+        public async Task<Result> RequestTextContent()
+        {
+            var result = await RequestAsync();
+            if (result.IsSuccess)
+            {
+                await GetTextContent(result);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 发送请求下载文件到指定路径
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception">文件已存在</exception>
+        /// <exception cref="Exception">目录不存在</exception>
+        public async Task<Result> RequestDownloadFile(string filePath)
+        {
+            var fileInfo = new FileInfo(filePath);
+            if(fileInfo.Exists)
+                throw new Exception($"文件已存在：{fileInfo.FullName}");
+            var directory = fileInfo.Directory;
+            if (!directory.Exists)
+            {
+                if (_AutoCreateDirectory)
+                    Directory.CreateDirectory(directory.FullName);
+                else
+                    throw new Exception($"目录不存在：{directory.FullName}。如需自动创建目录请使用SetAutoCreateDirectory(true)配置");
+            }
+            
+            var result = await RequestAsync();
+            
+            if (result.IsSuccess)
+            {
+                //TODO 下载文件
+                using (var fileStream = new FileStream(fileInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    await _StreamContent.CopyToAsync(fileStream);
+                    await fileStream.FlushAsync();
+                }
+            }
+            return result;
+        }
+
+        [Obsolete("未实现方法")]
+        public async Task<Result> RequestUploadFile(string filePath)
         {
             //TODO 上传文件
             return null;
         }
-
-        public async Task<Result> PostFile(string filePath, IProgress<double> progress)
+        [Obsolete("未实现方法")]
+        public async Task<Result> RequestUploadFile(string filePath, IProgress<double> progress)
         {
             //TODO 上传文件 带进度
             throw new NotImplementedException();
         }
-
-        public async Task<Result> PostFile(byte[] bytes)
+        [Obsolete("未实现方法")]
+        public async Task<Result> RequestUploadFile(byte[] bytes)
         {
             //TODO 上传文件
             throw new NotImplementedException();
         }
-
-        public async Task<Result> PostFile(byte[] bytes, IProgress<double> progress)
+        [Obsolete("未实现方法")]
+        public async Task<Result> RequestUploadFile(byte[] bytes, IProgress<double> progress)
         {
             //TODO 上传文件
-            throw new NotImplementedException();
-        }
-
-        public async Task<Result> DownloadFile()
-        {
-            //TODO 下载文件
             throw new NotImplementedException();
         }
 
         #endregion
 
         #region 创建请求
-        private async Task CreateRequestMessage()
+        private void CreateRequestMessage()
         {
             _RequestMessage = new HttpRequestMessage(new HttpMethod(this._Method.ToString()), _Uri);
 
@@ -271,7 +337,6 @@ namespace X.Helper.Http
             else
             {
                 _RequestMessage.Version = _Version;
-
             }
         }
         #endregion
@@ -292,38 +357,51 @@ namespace X.Helper.Http
             }
             result.CookieCollection = Helper.CookieHelper.GetCookieCollection(_ResponseMessage.Headers);
 
-            using (var stream = await _ResponseMessage.Content.ReadAsStreamAsync())
-            {
-                if (this._StreamContent == null)
-                {
-                    this._StreamContent = new System.IO.MemoryStream();
-                }
-                await stream.CopyToAsync(this._StreamContent);
-                await this._StreamContent.FlushAsync();
-            }
+            await GetStreamContent(result);
+            //await GetTextContent(result);
+            //using (var stream = await _ResponseMessage.Content.ReadAsStreamAsync())
+            //{
+            //    if (this._StreamContent == null)
+            //    {
+            //        this._StreamContent = new System.IO.MemoryStream();
+            //    }
+            //    await stream.CopyToAsync(this._StreamContent);
+            //    await this._StreamContent.FlushAsync();
+            //}
         }
 
         private async Task GetTextContent(Result result)
         {
-            if (this._StreamContent == null)
+            if (this._StreamContent == null && !this._StreamContent.CanRead)
                 return;
             using (var reader = new System.IO.StreamReader(this._StreamContent, _Encoding, this._DetectEncodingFromByteOrderMarks))
             {
                 result.TextContent = await reader.ReadToEndAsync();
+                this._StreamContent.Position = 0;
             }
-            this._StreamContent.Position = 0;
+            //this._StreamContent.Position = 0;
         }
 
         private async Task GetStreamContent(Result result)
         {
             using (var stream = await _ResponseMessage.Content.ReadAsStreamAsync())
             {
+                // var stream = await _ResponseMessage.Content.ReadAsStreamAsync();
                 if (this._StreamContent == null)
                 {
                     this._StreamContent = new System.IO.MemoryStream();
                 }
+                else
+                {
+                    this._StreamContent.SetLength(0);
+                }
+                //var tempStream = new MemoryStream();
+                //await stream.CopyToAsync(tempStream);
+                //tempStream.Position = 0;
+                //this._StreamContent = tempStream;
                 await stream.CopyToAsync(this._StreamContent);
-                await this._StreamContent.FlushAsync();
+                //await this._StreamContent.FlushAsync();
+                this._StreamContent.Position = 0;
             }
         }
         #endregion

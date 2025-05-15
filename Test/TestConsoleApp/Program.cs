@@ -18,7 +18,19 @@ namespace TestConsoleApp
             //var method = X.Helper.Http.Enums.HttpMethod.POST;
             //Console.WriteLine(method.ToString());
 
-            Http.HttpTest.HttpGetTest();
+            //Http.HttpTest.HttpGetTest();
+            //Http.HttpTest.HttpPostTest();
+            Http.HttpTest.HttpDownloadFileTestt();
+            //TestTemp();
+        }
+
+        static void TestTemp()
+        {
+            var str = @"d:\test\";
+            var fileInfo = new System.IO.FileInfo(str);
+            Console.WriteLine(fileInfo.Name);
+            var directoryInfo = new System.IO.DirectoryInfo(str);
+            Console.WriteLine(directoryInfo.Name);
         }
 
         #region Main with stopwatch

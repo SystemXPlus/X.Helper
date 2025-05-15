@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -284,7 +285,7 @@ namespace X.Helper.Http
         /// <returns></returns>
         public Client SetTimeout(int second)
         {
-            _Timeout = TimeSpan.FromSeconds(second);
+            this._Timeout = TimeSpan.FromSeconds(second);
             return this;
         }
         /// <summary>
@@ -294,7 +295,7 @@ namespace X.Helper.Http
         /// <returns></returns>
         public Client SetTimeout(TimeSpan timeSpan)
         {
-            _Timeout = timeSpan;
+            this._Timeout = timeSpan;
             return this;
         }
         /// <summary>
@@ -308,5 +309,46 @@ namespace X.Helper.Http
             return this;
         }
 
+        #region 文件
+        /// <summary>
+        /// 下载文件时目录不存在是否自动创建目录
+        /// </summary>
+        /// <param name="autoCreateDirectory"></param>
+        /// <returns></returns>
+        public Client SetAutoCreateDirectory(bool autoCreateDirectory)
+        {
+            this._AutoCreateDirectory = autoCreateDirectory;
+            return this;
+        }
+        /// <summary>
+        /// 添加文件到上传文件列表
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public Client AddFile(string filePath)
+        {
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                AddFile(new FileInfo(filePath));
+            }
+            return this;
+        }
+        /// <summary>
+        /// 添加文件到上传文件列表
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public Client AddFile(FileInfo fileInfo)
+        {
+            if (fileInfo == null || !fileInfo.Exists)
+            {
+                throw new Exception("文件不存在");
+            }
+            this._Files.Add(fileInfo);
+            return this;
+        }
+
+        #endregion
     }
 }

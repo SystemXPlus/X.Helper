@@ -13,7 +13,12 @@
 - ~~HTTPVERSION 默认1.1 请求HTTPS自动设置为1.0？~~
 - ~~20250327 Client增加将HttpResponseMessage中的Content读取到Result的StreamContent（MemoryStream）中的方法
 后续所有内容都在StreamContent基础上操作，最后再根据CONTENT-TYPE进行处理~~
-- 20250330 Client Result中的StreamContent移至Client中，RESULT中只保留输出正文、文件等内容，StreamContent由Client进行处理
+- ~~20250330 Client Result中的StreamContent移至Client中，RESULT中只保留输出正文、文件等内容，StreamContent由Client进行处理~~
+- 20250409 处理Request方法，当前REQUESTASYNC方法私有化。对外REQUEST方法为默认根据COMTENTTYPE处理成文本或二进制流
+	或由用户指定参数处理，默认以文本方式处理。当用户设置与COMTENTTYPE不一致时抛出异常。
+	下载文件时如参为目录，尝试从HEADER中获取文件名
+	增加AddFile方法，允许用户添加文件到请求中供上传文件使用，调用上传文件方法是判断文件列表
+- 301处理
 - 请求HEADER处理
 - 请求COOKIE处理
 - 请求携带证书处理

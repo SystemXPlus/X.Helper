@@ -56,6 +56,8 @@ namespace X.Helper.Http
         {
             get
             {
+                if (StatusCode == default)
+                    return false;
                 return this.StatusCode >= HttpStatusCode.OK && this.StatusCode < HttpStatusCode.Ambiguous;
             }
         }
