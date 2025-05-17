@@ -80,11 +80,14 @@ namespace X.Helper.Http
         /// <summary>
         /// 是否自动跟随3xx重定向（默认true）
         /// </summary>
-        /// <param name="allowAutoRedirect"></param>
+        /// <param name="allowAutoRedirect">是否允许自动重定向</param>
+        /// <param name="maxAutomationRediretions">最大允许重定向次数</param>
         /// <returns></returns>
-        public HttpHandler AllowAutoRedirect(bool allowAutoRedirect)
+        public HttpHandler AllowAutoRedirect(bool allowAutoRedirect, int maxAutomationRediretions = 10)
         {
             this._HttpHandler.AllowAutoRedirect = allowAutoRedirect;
+            if(allowAutoRedirect)
+                this._HttpHandler.MaxAutomaticRedirections = maxAutomationRediretions;
             return this;
         }
         /// <summary>

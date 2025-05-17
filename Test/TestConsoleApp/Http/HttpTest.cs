@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,8 +22,24 @@ namespace TestConsoleApp.Http
                     Console.WriteLine(X.Helper.Json.Serialize(result));
                 }
             }
-            
         }
+
+        public static void HttpGet301Test()
+        {
+            var url = "http://zgsmile.com";
+            var handler = new X.Helper.Http.HttpHandler();
+            handler.AllowAutoRedirect(true);
+            using (var client = new X.Helper.Http.Client(url, handler.Handler))
+            {
+                
+                //client.SetMethod(X.Helper.Http.Enums.HttpMethod.GET);
+                using (var result = client.RequestTextContent().Result)
+                {
+                    Console.WriteLine(X.Helper.Json.Serialize(result));
+                }
+            }
+        }
+
         public static void HttpPostTest()
         {
             var url = "http://api.zgsmile.com/Api/Resume/GetAllSiteRegularList";

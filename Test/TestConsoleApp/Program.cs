@@ -18,9 +18,10 @@ namespace TestConsoleApp
             //var method = X.Helper.Http.Enums.HttpMethod.POST;
             //Console.WriteLine(method.ToString());
 
-            Extension.EnumExtensionTest.TestGetEnumTypeFromString();
+            //Extension.EnumExtensionTest.TestGetEnumTypeFromString();
 
             //Http.HttpTest.HttpGetTest();
+            Http.HttpTest.HttpGet301Test();
             //Http.HttpTest.HttpPostTest();
             //Http.HttpTest.HttpDownloadFileTestt();
             //TestTemp();
