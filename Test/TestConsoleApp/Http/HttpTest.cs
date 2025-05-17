@@ -28,11 +28,11 @@ namespace TestConsoleApp.Http
         {
             var url = "http://zgsmile.com";
             var handler = new X.Helper.Http.HttpHandler();
-            handler.AllowAutoRedirect(true);
+            handler.AllowAutoRedirect(false);
             using (var client = new X.Helper.Http.Client(url, handler.Handler))
             {
                 
-                //client.SetMethod(X.Helper.Http.Enums.HttpMethod.GET);
+                client.SetMethod(X.Helper.Http.Enums.HttpMethod.GET);
                 using (var result = client.RequestTextContent().Result)
                 {
                     Console.WriteLine(X.Helper.Json.Serialize(result));

@@ -103,6 +103,8 @@ namespace X.Helper.Http
         private HttpRequestMessage _RequestMessage { get; set; }
         private HttpResponseMessage _ResponseMessage { get; set; }
 
+        private HttpMessageHandler _Handler { get; set; } = null;
+
         private bool _DetectEncodingFromByteOrderMarks = false;
 
         #endregion
@@ -131,6 +133,7 @@ namespace X.Helper.Http
         {
             if (handler != null)
             {
+                _Handler = handler;
                 _HttpClient = new HttpClient(handler);
             }
             else
@@ -224,6 +227,18 @@ namespace X.Helper.Http
 
                     //处理ResponseMessage返回Result
                     await HandleResponseMessage(result);
+                    if (_Handler is HttpClientHandler httpClientHandler)
+                    {
+                        if (!httpClientHandler.AllowAutoRedirect && ((int)result.StatusCode >= 300 && ((int)result.StatusCode <= 399)))
+                        {
+                            //处理302重定向
+                            var redirectUrl = _ResponseMessage.Headers.Location;
+                            if (redirectUrl != null)
+                            {
+                                result.RedirectUrl = redirectUrl.ToString();
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -323,7 +338,7 @@ namespace X.Helper.Http
 
             if (this._Method != Enums.HttpMethod.GET)
             {
-                if (!string.IsNullOrEmpty(_ContentType))
+                if (string.IsNullOrEmpty(_ContentType))
                     _ContentType = "text/plain";
                 _RequestMessage.Content = new StringContent("", _Encoding, _ContentType);
             }
