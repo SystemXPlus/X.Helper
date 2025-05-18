@@ -20,8 +20,8 @@ namespace TestConsoleApp
 
             //Extension.EnumExtensionTest.TestGetEnumTypeFromString();
 
-            //Http.HttpTest.HttpGetTest();
-            Http.HttpTest.HttpGet301Test();
+            Http.HttpTest.HttpGetTest();
+            //Http.HttpTest.HttpGet301Test();
             //Http.HttpTest.HttpPostTest();
             //Http.HttpTest.HttpDownloadFileTestt();
             //TestTemp();

@@ -18,13 +18,10 @@
 	或由用户指定参数处理，默认以文本方式处理。当用户设置与COMTENTTYPE不一致时抛出异常。
 	下载文件时如参为目录，尝试从HEADER中获取文件名
 	增加AddFile方法，允许用户添加文件到请求中供上传文件使用，调用上传文件方法是判断文件列表
-- 301处理 记录重定向历史轨迹
-     var redirectHistory = new List<(Uri From, Uri To)>();
-    handler.RedirectLocation = (oldRequest, response, newUri) => 
-    {
-        redirectHistory.Add((response.Headers.Location, newUri));
-        return newUri; // 必须返回新URI以继续重定向 
-    };
+- ~~CookieHelper中Cookie GetCookie(string cookieString)方法存在缺陷，COOKIEVALUE值包含=号时截取错误
+	并且无法解析DOMAIN PATH等COOKIE属性信息~~
+- 【暂停】301处理 记录重定向历史轨迹
+  因要兼容.NET4.6.1 无法使用LISTENNER
 - 请求HEADER处理
 - 请求COOKIE处理
 - 请求携带证书处理
