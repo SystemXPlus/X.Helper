@@ -25,6 +25,26 @@ namespace TestConsoleApp.Http
             }
         }
 
+        public static void HttpGetWithCookieTest()
+        {
+            var url = "http://oa.zgsmile.com/Page/Attachment/Detail.aspx?fileid=07fd0df1388a4106ba7dcaef5d2c0d82";
+            var handler = new X.Helper.Http.HttpHandler();
+            using (var client = new X.Helper.Http.Client(url, handler.Handler))
+            {
+                client.SetMethod(X.Helper.Http.Enums.HttpMethod.GET);
+                client.SetCookie("ASP.NET_SessionId", "l3f0yowyqujz0c1cvmel0rkn");
+                client.SetCookie("Account", "13888888888");
+                client.SetCookie("UserId", "19");
+                client.SetCookie("Token", "A92C607205D8445F");
+                client.SetCookie("Appkey", "f5ad2a74417c4076a25ef4cae92964a3");
+                client.SetCookie("ActivityCode", "374693EAC7E5889467EBF6BCD7D3D74B");
+                using (var result = client.RequestTextContent().Result)
+                {
+                    ShowResult(result);
+                }
+            }
+        }
+
         public static void HttpGet301Test()
         {
             var url = "http://zgsmile.com";

@@ -98,6 +98,7 @@ namespace X.Helper.Http
             }
             return this;
         }
+
         #endregion
 
         #region HEADER

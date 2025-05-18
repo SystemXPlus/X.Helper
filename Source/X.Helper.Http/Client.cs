@@ -227,11 +227,12 @@ namespace X.Helper.Http
 
                     //处理ResponseMessage返回Result
                     await HandleResponseMessage(result);
+                    //AllowAutoRedirect = false 时判断返回3XX重定向状态处理
                     if (_Handler is HttpClientHandler httpClientHandler)
                     {
                         if (!httpClientHandler.AllowAutoRedirect && ((int)result.StatusCode >= 300 && ((int)result.StatusCode <= 399)))
                         {
-                            //处理302重定向
+                            //记录3XX重定向URL到result.RedirectUrl
                             var redirectUrl = _ResponseMessage.Headers.Location;
                             if (redirectUrl != null)
                             {
@@ -356,9 +357,20 @@ namespace X.Helper.Http
                 _RequestMessage.Version = _Version;
             }
 
-            //HEADER
-            
+            //COOKIE / HEADER
+
+            if (_CookieCollection != null && _CookieCollection.Count > 0)
+            {
+                foreach (Cookie cookie in _CookieCollection)
+                {
+                    if (!string.IsNullOrEmpty(cookie.Name) && !string.IsNullOrEmpty(cookie.Value))
+                    {
+                        this._RequestMessage.Headers.Add("Cookie", $"{cookie.Name}={cookie.Value}");
+                    }
+                }
+            }
         }
+        
         #endregion
 
         #region 处理返回结果
