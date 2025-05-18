@@ -273,19 +273,21 @@ namespace X.Helper.Http
             var fileInfo = new FileInfo(filePath);
             if(fileInfo.Exists)
                 throw new Exception($"文件已存在：{fileInfo.FullName}");
-            var directory = fileInfo.Directory;
-            if (!directory.Exists)
-            {
-                if (_AutoCreateDirectory)
-                    Directory.CreateDirectory(directory.FullName);
-                else
-                    throw new Exception($"目录不存在：{directory.FullName}。如需自动创建目录请使用SetAutoCreateDirectory(true)配置");
-            }
+
             
             var result = await RequestAsync();
             
             if (result.IsSuccess)
             {
+                //请求成功后再尝试创建目录
+                var directory = fileInfo.Directory;
+                if (!directory.Exists)
+                {
+                    if (_AutoCreateDirectory)
+                        Directory.CreateDirectory(directory.FullName);
+                    else
+                        throw new Exception($"目录不存在：{directory.FullName}。如需自动创建目录请使用SetAutoCreateDirectory(true)配置");
+                }
                 //TODO 下载文件
                 using (var fileStream = new FileStream(fileInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
@@ -353,6 +355,9 @@ namespace X.Helper.Http
             {
                 _RequestMessage.Version = _Version;
             }
+
+            //HEADER
+            
         }
         #endregion
 

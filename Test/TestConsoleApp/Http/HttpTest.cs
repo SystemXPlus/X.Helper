@@ -50,12 +50,12 @@ namespace TestConsoleApp.Http
                 client.SetMethod(X.Helper.Http.Enums.HttpMethod.POST);
                 using (var result = client.RequestTextContent().Result)
                 {
-                    Console.WriteLine(X.Helper.Json.Serialize(result));
+                    ShowResult(result);
                 }
             }
         }
 
-        public static void HttpDownloadFileTestt()
+        public static void HttpDownloadFileTest()
         {
             var url = "http://www.zgsmile.com/Image/logo.png";
             var handler = new X.Helper.Http.HttpHandler();
@@ -64,7 +64,22 @@ namespace TestConsoleApp.Http
                 client.SetMethod(X.Helper.Http.Enums.HttpMethod.GET);
                 using (var result = client.RequestDownloadFile(@"D:\testdownload.png").Result)
                 {
-                    Console.WriteLine(X.Helper.Json.Serialize(result));
+                    ShowResult(result);
+                }
+            }
+        }
+
+        public static void HttpDownloadFileWithCookieTest()
+        {
+            var url = "http://oa.zgsmile.com/Page/Attachment/Down.aspx?fileid=07fd0df1388a4106ba7dcaef5d2c0d82";
+            var handler = new X.Helper.Http.HttpHandler();
+            using (var client = new X.Helper.Http.Client(url, handler.Handler))
+            {
+                client.SetMethod(X.Helper.Http.Enums.HttpMethod.GET);
+                client.SetCookie("ASP.NET_SessionId", "h5f45ggm4w20xkg1uzbajpzz");
+                using (var result = client.RequestDownloadFile(@"D:\test.html").Result)
+                {
+                    ShowResult(result);
                 }
             }
         }
@@ -91,6 +106,10 @@ namespace TestConsoleApp.Http
                 Console.WriteLine("".PadRight(40, '_') + "\r\n");
                 //Console.WriteLine($"{(item.Name + ":").PadRight(30, ' ')}{item.Value}");
             }
+        }
+
+        private static void ShowRequestHeader()
+        {
 
         }
         
