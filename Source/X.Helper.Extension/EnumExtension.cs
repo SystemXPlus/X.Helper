@@ -54,5 +54,25 @@ public static class EnumExtension
             return returnObjectNameWhenNotDescription ? eum.ToString() : string.Empty;
         return ((DescriptionAttribute)objs[0]).Description;
     }
+
+    /// <summary>
+    /// 返回与字符串值相对应的枚举值
+    /// </summary>
+    /// <typeparam name="T">枚举类型</typeparam>
+    /// <param name="itemName">字符串</param>
+    /// <param name="ignoreCase">是否区分大小写</param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    public static T GetEnumTypeFromString<T>(this string itemName, bool ignoreCase = false, bool returnDefaultValueOnFailed = false) where T : struct, IConvertible
+    {
+        if (!typeof(T).IsEnum)
+            throw new ArgumentException("T must be an enumerated type");
+        if (Enum.TryParse(itemName, ignoreCase, out T result))
+            return result;
+        if (returnDefaultValueOnFailed)
+            return default(T);
+        else
+            throw new KeyNotFoundException(itemName);
+    }
 }
 
