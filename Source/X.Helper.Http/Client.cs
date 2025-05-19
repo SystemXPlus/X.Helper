@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Security;
@@ -8,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace X.Helper.Http
 {
@@ -224,7 +226,9 @@ namespace X.Helper.Http
             {
                 using (this._ResponseMessage = await _HttpClient.SendAsync(_RequestMessage))
                 {
-
+                    // 发送前检查请求头 
+                    var cookieHeader = _RequestMessage.Headers.GetValues("Cookie").FirstOrDefault();
+                    Console.WriteLine($"即将发送的Cookie头: {cookieHeader ?? "NULL"}");
                     //处理ResponseMessage返回Result
                     await HandleResponseMessage(result);
                     //AllowAutoRedirect = false 时判断返回3XX重定向状态处理
@@ -361,13 +365,17 @@ namespace X.Helper.Http
 
             if (_CookieCollection != null && _CookieCollection.Count > 0)
             {
-                foreach (Cookie cookie in _CookieCollection)
-                {
-                    if (!string.IsNullOrEmpty(cookie.Name) && !string.IsNullOrEmpty(cookie.Value))
-                    {
-                        this._RequestMessage.Headers.Add("Cookie", $"{cookie.Name}={cookie.Value}");
-                    }
-                }
+
+                var cookieStr = Helper.CookieHelper.GetCookieStr(_CookieCollection, _Encoding);
+                var cookieEncodeStr = HttpUtility.UrlEncode(_Encoding.GetBytes(cookieStr));
+                this._RequestMessage.Headers.Add("Cookie", cookieStr);
+                //foreach (Cookie cookie in _CookieCollection)
+                //{
+                //    if (!string.IsNullOrEmpty(cookie.Name) && !string.IsNullOrEmpty(cookie.Value))
+                //    {
+                //        this._RequestMessage.Headers.Add("Cookie", $"{cookie.Name}={cookie.Value}");
+                //    }
+                //}
             }
         }
         

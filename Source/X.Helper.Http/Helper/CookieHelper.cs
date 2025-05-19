@@ -6,23 +6,30 @@ using System.Net.Http.Headers;
 //using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace X.Helper.Http.Helper
 {
-    internal class CookieHelper
+    public class CookieHelper
     {
         /// <summary>
         /// 从COOKIE字典中获取拼接后的COOKIE字符串
         /// </summary>
         /// <param name="cookies"></param>
         /// <returns></returns>
-        public static string GetCookieStr(Dictionary<string, string> cookies)
+        public static string GetCookieStr(Dictionary<string, string> cookies, Encoding encoding = null)
         {
             if (cookies == null || cookies.Count == 0) return string.Empty;
+            if (encoding == null) encoding = Encoding.UTF8;
             var result = string.Empty;
             foreach (var item in cookies)
             {
-                result += $"{item.Key}={item.Value};";
+                var bytes = encoding.GetBytes(item.Value);
+                //var value = HttpUtility.UrlEncode(bytes);
+                var value = Encoding.ASCII.GetString(bytes);
+                result += $"{item.Key}={value};";
+                //result += $"{item.Key}={Uri.EscapeDataString(item.Value)};";
+                //result += $"{item.Key}={item.Value};";
             }
             return result;
         }
@@ -32,13 +39,19 @@ namespace X.Helper.Http.Helper
         /// </summary>
         /// <param name="cookies"></param>
         /// <returns></returns>
-        public static string GetCookieStr(CookieCollection cookies)
+        public static string GetCookieStr(CookieCollection cookies, Encoding encoding = null)
         {
             if (cookies == null || cookies.Count == 0) return string.Empty;
+            if(encoding == null) encoding = Encoding.UTF8;
             var result = string.Empty;
             foreach (Cookie item in cookies)
             {
-                result += $"{item.Name}={item.Value};";
+                var bytes = encoding.GetBytes(item.Value);
+                //var value = HttpUtility.UrlEncode(bytes);
+                var value = Encoding.ASCII.GetString(bytes);
+                result += $"{item.Name}={value};";
+                //result += $"{item.Name}={Uri.EscapeDataString(item.Value)};";
+                //result += $"{item.Name}={item.Value};";
             }
             return result;
         }
@@ -173,7 +186,7 @@ namespace X.Helper.Http.Helper
             if (arr.Length == 0) return null; ;
             var tempArr0 = arr[0].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
             if (tempArr0.Length == 0) return null;
-            cookie.Name = tempArr0[0];
+            cookie.Name = tempArr0[0].Trim();
             if (tempArr0.Length > 1)
             {
                 if (tempArr0.Length == 2)
