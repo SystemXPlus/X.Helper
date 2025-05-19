@@ -10,7 +10,7 @@
 		<Authors>SystemX</Authors>
 		<Owners>607432@qq.com</Owners>
 		<Copyright>Copyright © SystemX %40 2023</Copyright>
-		<Version>1.0.10.1</Version>
+		<Version>1.0.10.2</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<FileVersion>$(Version)</FileVersion>
 		<PackageProjectUrl>https://github.com/SystemxPlus/X.Helper</PackageProjectUrl>
