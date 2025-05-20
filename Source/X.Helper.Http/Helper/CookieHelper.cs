@@ -26,7 +26,7 @@ namespace X.Helper.Http.Helper
             {
                 var bytes = encoding.GetBytes(item.Value);
                 //var value = HttpUtility.UrlEncode(bytes);
-                var value = Encoding.ASCII.GetString(bytes);
+                var value = HttpUtility.UrlEncode(encoding.GetString(bytes), encoding);
                 result += $"{item.Key}={value};";
                 //result += $"{item.Key}={Uri.EscapeDataString(item.Value)};";
                 //result += $"{item.Key}={item.Value};";
@@ -48,7 +48,7 @@ namespace X.Helper.Http.Helper
             {
                 var bytes = encoding.GetBytes(item.Value);
                 //var value = HttpUtility.UrlEncode(bytes);
-                var value = Encoding.ASCII.GetString(bytes);
+                var value = HttpUtility.UrlEncode(encoding.GetString(bytes), encoding);
                 result += $"{item.Name}={value};";
                 //result += $"{item.Name}={Uri.EscapeDataString(item.Value)};";
                 //result += $"{item.Name}={item.Value};";

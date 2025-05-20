@@ -18,6 +18,8 @@ namespace X.Helper.Http
         #region 私有字段
         private readonly HttpClient _HttpClient;
 
+        private readonly HttpMessageHandler _HttpHandler;
+
         //private CookieContainer cookieContainer;
 
         private Uri _Uri { get; set; }
@@ -105,11 +107,10 @@ namespace X.Helper.Http
         private HttpRequestMessage _RequestMessage { get; set; }
         private HttpResponseMessage _ResponseMessage { get; set; }
 
-        private HttpMessageHandler _Handler { get; set; } = null;
 
         private bool _DetectEncodingFromByteOrderMarks = false;
 
-        #endregion
+#endregion
 
         #region 构造
         public Client() : this(uri: null, handler: null)
@@ -135,7 +136,7 @@ namespace X.Helper.Http
         {
             if (handler != null)
             {
-                _Handler = handler;
+                _HttpHandler = handler;
                 _HttpClient = new HttpClient(handler);
             }
             else
@@ -232,7 +233,7 @@ namespace X.Helper.Http
                     //处理ResponseMessage返回Result
                     await HandleResponseMessage(result);
                     //AllowAutoRedirect = false 时判断返回3XX重定向状态处理
-                    if (_Handler is HttpClientHandler httpClientHandler)
+                    if (_HttpHandler is HttpClientHandler httpClientHandler)
                     {
                         if (!httpClientHandler.AllowAutoRedirect && ((int)result.StatusCode >= 300 && ((int)result.StatusCode <= 399)))
                         {
@@ -363,12 +364,22 @@ namespace X.Helper.Http
 
             //COOKIE / HEADER
 
+            var cookiestr = "ActivityCode=374693EAC7E5889467EBF6BCD7D3D74B; UseOldResumeDetail=false; LiveWSALA64567996=90adf78df0f145b6be3d71a17a1ffdfd; NALA64567996fistvisitetime=1747322319148; NALA64567996visitecounts=1; NALA64567996IP=%7C112.10.248.233%7C; Hm_lvt_4fecd4bd0b0840b8187dca3933577306=1747322320; NALA64567996lastvisitetime=1747322321303; NALA64567996visitepages=2; ASP.NET_SessionId=5yiemi013byfimeyj33mjjlr; Token=27793CA6F9F0BABF; Account=13888888888; Avatar=http://oa.zgsmile.com/Images/account.jpg; Name=Admin（admin）; Appkey=f5ad2a74417c4076a25ef4cae92964a3; UserId=19; NickName=管理员";
+            this._RequestMessage.Headers.Add("Cookie", cookiestr);
+
             if (_CookieCollection != null && _CookieCollection.Count > 0)
             {
-
+                //手动携带Cookie时 自动禁用HttpHandler的UseCookie
+                if(_HttpHandler is HttpClientHandler httpClientHandler)
+                {
+                    httpClientHandler.UseCookies = false;
+                }
                 var cookieStr = Helper.CookieHelper.GetCookieStr(_CookieCollection, _Encoding);
                 var cookieEncodeStr = HttpUtility.UrlEncode(_Encoding.GetBytes(cookieStr));
                 this._RequestMessage.Headers.Add("Cookie", cookieStr);
+
+
+
                 //foreach (Cookie cookie in _CookieCollection)
                 //{
                 //    if (!string.IsNullOrEmpty(cookie.Name) && !string.IsNullOrEmpty(cookie.Value))

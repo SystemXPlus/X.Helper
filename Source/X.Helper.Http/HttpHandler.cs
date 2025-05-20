@@ -16,7 +16,6 @@ namespace X.Helper.Http
     {
         private readonly HttpClientHandler _HttpHandler;
 
-        private bool _UserCookieContainer = false;
 
         public HttpClientHandler Handler => _HttpHandler;
 
@@ -30,6 +29,8 @@ namespace X.Helper.Http
             if (handler == null)
             {
                 _HttpHandler = new HttpClientHandler();
+                //默认开启
+                //_HttpHandler.UseCookies = false;
             }
             else
             {
@@ -47,23 +48,33 @@ namespace X.Helper.Http
             return this;
         }
         /// <summary>
-        /// 是否自动处理Set-Cookie头
+        /// 设置是否自动处理Set-Cookie头
+        /// <para>该值为True时将会忽略Http.Client手动设置的Cookie</para>
+        /// <para>默认开启，需要手动禁用</para>
+        /// <para>此项开启时，HttpClient.RequestMessage手动新增的COOKIE将会被忽略</para>
         /// </summary>
         /// <param name="useCookies"></param>
         /// <returns></returns>
-        public HttpHandler UseCookies(bool useCookies)
+        public HttpHandler SetUseCookies(bool useCookies)
         {
             this._HttpHandler.UseCookies = useCookies;
+            if (useCookies)
+                this._HttpHandler.CookieContainer = new CookieContainer();
             return this;
         }
-        public HttpHandler SetCookieContainer(bool useCookieContainer)
+        /// <summary>
+        /// 设置CookieContainer对象
+        /// </summary>
+        /// <param name="cookieContainer"></param>
+        /// <returns></returns>
+        public HttpHandler SetCookieContainer(CookieContainer cookieContainer)
         {
-            _UserCookieContainer = useCookieContainer;
-            if (_UserCookieContainer)
+            //TODO 这里参数有问题应该为COOKIECONTAINER。直接设置值。而不是BOOL值。设置非NULL值以后自动将USECOOKIE设置为TRUE
+            if (cookieContainer != null)
             {
-                this._HttpHandler.CookieContainer = new CookieContainer();
+                this._HttpHandler.CookieContainer = cookieContainer;
             }
-            return this;
+            return SetUseCookies(true);
         }
 
         /// <summary>
@@ -86,7 +97,7 @@ namespace X.Helper.Http
         public HttpHandler AllowAutoRedirect(bool allowAutoRedirect, int maxAutomationRediretions = 10)
         {
             this._HttpHandler.AllowAutoRedirect = allowAutoRedirect;
-            if(allowAutoRedirect)
+            if (allowAutoRedirect)
                 this._HttpHandler.MaxAutomaticRedirections = maxAutomationRediretions;
             return this;
         }
