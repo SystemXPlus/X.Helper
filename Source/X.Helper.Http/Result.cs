@@ -15,13 +15,13 @@ namespace X.Helper.Http
     {
         private bool disposedValue;
 
-        public CookieCollection CookieCollection { get; set; }
+        public CookieCollection CookieCollection { get; internal set; }
 
-        public WebHeaderCollection HeaderCollection { get; set; }
+        public WebHeaderCollection HeaderCollection { get; internal set; }
 
-        public HttpStatusCode StatusCode { get; set; }
+        public HttpStatusCode StatusCode { get; internal set; }
 
-        public string StatusDescription { get; set; }
+        public string StatusDescription { get; internal set; }
 
 
         /// <summary>
@@ -42,11 +42,13 @@ namespace X.Helper.Http
         /// <summary>
         /// 返回二进制字节数组
         /// </summary>
-        public byte[] Bytes { get; set; }
+        public byte[] Bytes { get; internal set; }
 
-        public string ResponseUri { get;  set; }
+        public string DownloadFilePath { get; internal set; }
 
-        public string RedirectUrl { get; set; }
+        public string ResponseUri { get;  internal set; }
+
+        public string RedirectUrl { get; internal set; }
 
 
         /// <summary>

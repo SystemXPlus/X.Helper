@@ -34,10 +34,13 @@ namespace TestConsoleApp.Http
             {
                 client.SetMethod(X.Helper.Http.Enums.HttpMethod.GET);
                 var cookiestr = "ActivityCode=374693EAC7E5889467EBF6BCD7D3D74B; UseOldResumeDetail=false; LiveWSALA64567996=90adf78df0f145b6be3d71a17a1ffdfd; NALA64567996fistvisitetime=1747322319148; NALA64567996visitecounts=1; NALA64567996IP=%7C112.10.248.233%7C; Hm_lvt_4fecd4bd0b0840b8187dca3933577306=1747322320; NALA64567996lastvisitetime=1747322321303; NALA64567996visitepages=2; ASP.NET_SessionId=5yiemi013byfimeyj33mjjlr; Token=27793CA6F9F0BABF; Account=13888888888; Avatar=http://oa.zgsmile.com/Images/account.jpg; Name=Adminadmin; Appkey=f5ad2a74417c4076a25ef4cae92964a3; UserId=19;";
-                var cookies = X.Helper.Http.Helper.CookieHelper.GetCookieCollection(cookiestr);
-                client.SetCookie(cookies)
+                //var cookies = X.Helper.Http.Helper.CookieHelper.GetCookieCollection(cookiestr);
+                client.SetCookie(cookiestr)
                     .SetAccept("*/*")
-                    .SetEncoding(Encoding.UTF8);
+                    //.SetEncoding(Encoding.UTF8)
+                    //.SetContentType()
+                    ;
+
 
                 //var cookieComtainer = new CookieContainer();
                 //cookieComtainer.Add(cookies);

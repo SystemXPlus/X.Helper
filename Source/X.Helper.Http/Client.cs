@@ -47,6 +47,18 @@ namespace X.Helper.Http
         /// 请求的Accept
         /// </summary>
         private string _Accept { get; set; } = "*/*";
+        /// <summary>
+        /// 请求的Accept-Charset
+        /// </summary>
+        private string _AcceptCharset { get; set; } = "utf-8,gbk,gb2312,iso-8859-1; q=0.9,*; q=0.1";
+        /// <summary>
+        /// 请求的Accept-Encoding
+        /// </summary>
+        private string _AcceptEncoding { get; set; } = "gzip, deflate, br";
+        /// <summary>
+        /// 请求的Accept-Language
+        /// </summary>
+        private string _AcceptLanguage { get; set; } = "zh-CN,zh;q=0.9,ja;q=0.8,zh-TW;q=0.7,en;q=0.6";
 
         private MemoryStream _StreamContent;
         /// <summary>
@@ -115,7 +127,7 @@ namespace X.Helper.Http
 
         private bool _DetectEncodingFromByteOrderMarks = false;
 
-#endregion
+        #endregion
 
         #region 构造
         public Client() : this(uri: null, handler: null)
@@ -218,6 +230,7 @@ namespace X.Helper.Http
             }
 
             CreateRequestMessage();
+            CreateHeader();
 
         }
 
@@ -286,12 +299,12 @@ namespace X.Helper.Http
         public async Task<Result> RequestDownloadFile(string filePath)
         {
             var fileInfo = new FileInfo(filePath);
-            if(fileInfo.Exists)
+            if (fileInfo.Exists)
                 throw new Exception($"文件已存在：{fileInfo.FullName}");
 
-            
+
             var result = await RequestAsync();
-            
+
             if (result.IsSuccess)
             {
                 //请求成功后再尝试创建目录
@@ -309,6 +322,7 @@ namespace X.Helper.Http
                     await _StreamContent.CopyToAsync(fileStream);
                     await fileStream.FlushAsync();
                 }
+
             }
             return result;
         }
@@ -371,18 +385,41 @@ namespace X.Helper.Http
                 _RequestMessage.Version = _Version;
             }
 
-            //COOKIE / HEADER
 
+        }
+
+        private void CreateHeader()
+        {
+            CreateHeaderCookie();
+            CreateHeaderAccept();
+            CreateHeaderAcceptCharset();
+            CreateHeaderAcceptEncoding();
+            CreateHeaderAcceptLanguage();
+
+
+
+
+
+            //CONTENT TYPE
+            //已在CreateRequestMessage中设置
+            //if (!string.IsNullOrEmpty(_ContentType))
+            //{
+            //this._RequestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(_ContentType);
+            //}
+        }
+
+        private void CreateHeaderCookie()
+        {
             //COOKIE
             if (_CookieCollection != null && _CookieCollection.Count > 0)
             {
                 //手动携带Cookie时 自动禁用HttpHandler的UseCookie
-                if(_HttpHandler is HttpClientHandler httpClientHandler)
+                if (_HttpHandler is HttpClientHandler httpClientHandler)
                 {
                     httpClientHandler.UseCookies = false;
                 }
                 var cookieStr = Helper.CookieHelper.GetCookieStr(_CookieCollection, _Encoding);
-                var cookieEncodeStr = HttpUtility.UrlEncode(_Encoding.GetBytes(cookieStr));
+                //var cookieEncodeStr = HttpUtility.UrlEncode(_Encoding.GetBytes(cookieStr));
                 this._RequestMessage.Headers.Add("Cookie", cookieStr);
 
 
@@ -395,7 +432,10 @@ namespace X.Helper.Http
                 //    }
                 //}
             }
+        }
 
+        private void CreateHeaderAccept()
+        {
             //ACCEPT
             if (!string.IsNullOrEmpty(_Accept))
             {
@@ -410,14 +450,134 @@ namespace X.Helper.Http
                     }
                 }
             }
+        }
 
-            //CONTENT-TYPE
-            if (!string.IsNullOrEmpty(_ContentType))
+        private void CreateHeaderAcceptCharset()
+        {
+            //ACCEPT CHARSET
+            if (!string.IsNullOrEmpty(_AcceptCharset))
             {
-                this._RequestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(_ContentType);
+                var acceptCharsetArr = _AcceptCharset.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (null != acceptCharsetArr && acceptCharsetArr.Length > 0)
+                {
+                    if (this._RequestMessage.Headers.AcceptCharset.Count > 0)
+                        this._RequestMessage.Headers.AcceptCharset.Clear();
+                    foreach (var item in acceptCharsetArr)
+                    {
+                        if (item.Contains(';'))
+                        {
+                            //有quality参数
+                            var tempArr = item.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            double quality = 1;
+                            if (tempArr.Length > 0)
+                            {
+                                var value = tempArr[0].Trim();
+
+                                if (tempArr[0].Contains('='))
+                                {
+                                    var tempArr2 = tempArr[0].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                                    if (tempArr2.Length > 0)
+                                    {
+                                        if (!double.TryParse(tempArr2[1].Trim(), out quality))
+                                            quality = 1;
+                                    }
+                                }
+                            }
+                            this._RequestMessage.Headers.AcceptCharset.Add(new System.Net.Http.Headers.StringWithQualityHeaderValue(tempArr[0].Trim(), quality));
+                        }
+                        else
+                        {
+                            this._RequestMessage.Headers.AcceptCharset.Add(new System.Net.Http.Headers.StringWithQualityHeaderValue(item.Trim()));
+                        }
+                    }
+                }
             }
         }
-        
+
+        private void CreateHeaderAcceptEncoding()
+        {
+            //ACCEPT ENCODING
+            if (!string.IsNullOrEmpty(_AcceptEncoding))
+            {
+                var acceptEncodingArr = _AcceptEncoding.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (null != acceptEncodingArr && acceptEncodingArr.Length > 0)
+                {
+                    if (this._RequestMessage.Headers.AcceptEncoding.Count > 0)
+                        this._RequestMessage.Headers.AcceptEncoding.Clear();
+                    foreach (var item in acceptEncodingArr)
+                    {
+                        if (item.Contains(';'))
+                        {
+                            //有quality参数
+                            double quality = 1;
+                            var tempArr = item.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (tempArr.Length > 0)
+                            {
+                                var value = tempArr[0].Trim();
+                               
+                                if (tempArr[0].Contains('='))
+                                {
+                                    var tempArr2 = tempArr[0].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                                    if (tempArr2.Length > 0)
+                                    {
+                                        if (!double.TryParse(tempArr2[1].Trim(), out quality))
+                                            quality = 1;
+                                    }
+                                }
+                            }
+                            this._RequestMessage.Headers.AcceptEncoding.Add(new System.Net.Http.Headers.StringWithQualityHeaderValue(tempArr[0].Trim(), quality));
+                        }
+                        else
+                        {
+                            this._RequestMessage.Headers.AcceptEncoding.Add(new System.Net.Http.Headers.StringWithQualityHeaderValue(item.Trim()));
+                        }
+                    }
+                }
+            }
+        }
+
+        private void CreateHeaderAcceptLanguage()
+        {
+            //ACCEPT LANGUAGE
+            if (!string.IsNullOrEmpty(_AcceptLanguage))
+            {
+                var acceptLanguageArr = _AcceptLanguage.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (null != acceptLanguageArr && acceptLanguageArr.Length > 0)
+                {
+                    if (this._RequestMessage.Headers.AcceptLanguage.Count > 0)
+                        this._RequestMessage.Headers.AcceptLanguage.Clear();
+                    foreach (var item in acceptLanguageArr)
+                    {
+                        if (item.Contains(';'))
+                        {
+                            //有quality参数
+                            var tempArr = item.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            double quality = 1;
+                            if (tempArr.Length > 0)
+                            {
+                                var value = tempArr[0].Trim();
+                                
+                                if (tempArr[1].Contains('='))
+                                {
+                                    var tempArr2 = tempArr[1].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                                    if (tempArr2.Length > 0)
+                                    {
+                                        if (!double.TryParse(tempArr2[1].Trim(), out quality))
+                                            quality = 1;
+                                    }
+                                }
+                            }
+                            this._RequestMessage.Headers.AcceptLanguage.Add(new System.Net.Http.Headers.StringWithQualityHeaderValue(tempArr[0].Trim(), quality));
+                        }
+                        else
+                        {
+                            this._RequestMessage.Headers.AcceptLanguage.Add(new System.Net.Http.Headers.StringWithQualityHeaderValue(item.Trim()));
+                        }
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region 处理返回结果

@@ -54,6 +54,14 @@ namespace X.Helper.Http
 #endif
             return this;
         }
+        public Client SetCookie(string cookieString)
+        {
+            if(string.IsNullOrEmpty(cookieString))
+                return this;
+            var cookieCollection = Helper.CookieHelper.GetCookieCollection(cookieString);
+            this.CookieCollection.Add(cookieCollection);
+            return this;
+        }
         /// <summary>
         /// 设置Cookie
         /// </summary>
@@ -244,25 +252,60 @@ namespace X.Helper.Http
             return this;
         }
         /// <summary>
-        /// 设置编码
+        /// 设置Accept-Charset请求头
         /// </summary>
-        /// <param name="encoding"></param>
+        /// <param name="acceptCharset"></param>
         /// <returns></returns>
-        public Client SetEncoding(Encoding encoding)
+        public Client SetAcceptCharset(string acceptCharset)
         {
-            this._Encoding = encoding;
+            if (string.IsNullOrEmpty(acceptCharset))
+                return this;
+            this._AcceptCharset = acceptCharset;
             return this;
         }
         /// <summary>
-        /// 设置编码
+        /// 设置Accept-Encoding请求头
         /// </summary>
-        /// <param name="encoding"></param>
+        /// <param name="acceptEncoding"></param>
         /// <returns></returns>
-        public Client SetEncoding(string encoding)
+        public Client SetAcceptEncoding(string acceptEncoding)
         {
-            this._Encoding = Encoding.GetEncoding(encoding);
+            if(!string.IsNullOrEmpty(acceptEncoding))
+                this._AcceptEncoding = acceptEncoding;
             return this;
         }
+        /// <summary>
+        /// 设置Accept-Language请求头
+        /// </summary>
+        /// <param name="acceptLanguage"></param>
+        /// <returns></returns>
+        public Client SetAcceptLanguage(string acceptLanguage)
+        {
+            if(!string.IsNullOrEmpty(acceptLanguage))
+                this._AcceptLanguage = acceptLanguage;
+            return this;
+        }
+
+        ///// <summary>
+        ///// 设置编码
+        ///// </summary>
+        ///// <param name="encoding"></param>
+        ///// <returns></returns>
+        //public Client SetEncoding(Encoding encoding)
+        //{
+        //    this._Encoding = encoding;
+        //    return this;
+        //}
+        ///// <summary>
+        ///// 设置编码
+        ///// </summary>
+        ///// <param name="encoding"></param>
+        ///// <returns></returns>
+        //public Client SetEncoding(string encoding)
+        //{
+        //    this._Encoding = Encoding.GetEncoding(encoding);
+        //    return this;
+        //}
         /// <summary>
         /// 设置编码
         /// </summary>
