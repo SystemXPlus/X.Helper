@@ -388,6 +388,9 @@ namespace X.Helper.Http
 
         }
 
+        /// <summary>
+        /// 创建请求Header配置
+        /// </summary>
         private void CreateHeader()
         {
             CreateHeaderCookie();
