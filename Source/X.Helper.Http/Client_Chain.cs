@@ -225,7 +225,10 @@ namespace X.Helper.Http
         /// <returns></returns>
         public Client SetContentType(string contentType)
         {
-            this._RequestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+            if(!string.IsNullOrEmpty(contentType))
+            {
+                this._ContentType = contentType;
+            }
             return this;
         }
         /// <summary>
@@ -237,15 +240,7 @@ namespace X.Helper.Http
         {
             if (string.IsNullOrEmpty(accept))
                 return this;
-            var acceptArr = accept.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            if (null == acceptArr || acceptArr.Length == 0)
-                return this;
-            if (this._RequestMessage.Headers.Accept.Count > 0)
-                this._RequestMessage.Headers.Accept.Clear();
-            foreach (var item in acceptArr)
-            {
-                this._RequestMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(accept));
-            }
+            this._Accept = accept;
             return this;
         }
         /// <summary>

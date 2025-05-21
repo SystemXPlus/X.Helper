@@ -27,15 +27,17 @@ namespace TestConsoleApp.Http
 
         public static void HttpGetWithCookieTest()
         {
-            //var url = "http://oa.zgsmile.com/Page/Attachment/Detail.aspx?fileid=07fd0df1388a4106ba7dcaef5d2c0d82";
-            var url = "http://localhost:5088/Api/Test/TestCookie";
+            var url = "http://oa.zgsmile.com/Page/Attachment/Detail.aspx?fileid=07fd0df1388a4106ba7dcaef5d2c0d82";
+            //var url = "http://localhost:5088/Api/Test/TestCookie";
             var handler = new X.Helper.Http.HttpHandler().SetUseCookies(false).UseProxy(new WebProxy("127.0.0.1:8888"));
             using (var client = new X.Helper.Http.Client(url, handler.Handler))
             {
                 client.SetMethod(X.Helper.Http.Enums.HttpMethod.GET);
-                var cookiestr = "ActivityCode=374693EAC7E5889467EBF6BCD7D3D74B; UseOldResumeDetail=false; LiveWSALA64567996=90adf78df0f145b6be3d71a17a1ffdfd; NALA64567996fistvisitetime=1747322319148; NALA64567996visitecounts=1; NALA64567996IP=%7C112.10.248.233%7C; Hm_lvt_4fecd4bd0b0840b8187dca3933577306=1747322320; NALA64567996lastvisitetime=1747322321303; NALA64567996visitepages=2; ASP.NET_SessionId=5yiemi013byfimeyj33mjjlr; Token=27793CA6F9F0BABF; Account=13888888888; Avatar=http://oa.zgsmile.com/Images/account.jpg; Name=Admin（admin）; Appkey=f5ad2a74417c4076a25ef4cae92964a3; UserId=19; NickName=管理员";
+                var cookiestr = "ActivityCode=374693EAC7E5889467EBF6BCD7D3D74B; UseOldResumeDetail=false; LiveWSALA64567996=90adf78df0f145b6be3d71a17a1ffdfd; NALA64567996fistvisitetime=1747322319148; NALA64567996visitecounts=1; NALA64567996IP=%7C112.10.248.233%7C; Hm_lvt_4fecd4bd0b0840b8187dca3933577306=1747322320; NALA64567996lastvisitetime=1747322321303; NALA64567996visitepages=2; ASP.NET_SessionId=5yiemi013byfimeyj33mjjlr; Token=27793CA6F9F0BABF; Account=13888888888; Avatar=http://oa.zgsmile.com/Images/account.jpg; Name=Adminadmin; Appkey=f5ad2a74417c4076a25ef4cae92964a3; UserId=19;";
                 var cookies = X.Helper.Http.Helper.CookieHelper.GetCookieCollection(cookiestr);
-                //client.SetCookie(cookies);
+                client.SetCookie(cookies)
+                    .SetAccept("*/*")
+                    .SetEncoding(Encoding.UTF8);
 
                 //var cookieComtainer = new CookieContainer();
                 //cookieComtainer.Add(cookies);

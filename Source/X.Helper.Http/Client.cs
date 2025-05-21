@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mime;
 using System.Net.Security;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -42,6 +43,10 @@ namespace X.Helper.Http
         /// 请求编码格式
         /// </summary>
         private Encoding _Encoding { get; set; } = Encoding.UTF8;
+        /// <summary>
+        /// 请求的Accept
+        /// </summary>
+        private string _Accept { get; set; } = "*/*";
 
         private MemoryStream _StreamContent;
         /// <summary>
@@ -225,11 +230,11 @@ namespace X.Helper.Http
             var result = new Result();
             try
             {
+                // 发送前检查请求头 
+                //var cookieHeader = _RequestMessage.Headers.GetValues("Cookie").FirstOrDefault();
+                //Console.WriteLine($"即将发送的Cookie头: {cookieHeader ?? "NULL"}");
                 using (this._ResponseMessage = await _HttpClient.SendAsync(_RequestMessage))
                 {
-                    // 发送前检查请求头 
-                    var cookieHeader = _RequestMessage.Headers.GetValues("Cookie").FirstOrDefault();
-                    Console.WriteLine($"即将发送的Cookie头: {cookieHeader ?? "NULL"}");
                     //处理ResponseMessage返回Result
                     await HandleResponseMessage(result);
                     //AllowAutoRedirect = false 时判断返回3XX重定向状态处理
@@ -249,10 +254,14 @@ namespace X.Helper.Http
             }
             catch (Exception ex)
             {
+                var errMsg = $"请求失败：{ex.Message}";
+                if (ex.InnerException != null)
+                    errMsg += $" -> {ex.InnerException.Message}";
                 tmpResult = new Result
                 {
-                    StatusDescription = $"请求失败：{ex.Message}"
-                };
+                    StatusDescription = errMsg
+                }
+            ;
                 return tmpResult;
             }
             return result;
@@ -364,9 +373,7 @@ namespace X.Helper.Http
 
             //COOKIE / HEADER
 
-            var cookiestr = "ActivityCode=374693EAC7E5889467EBF6BCD7D3D74B; UseOldResumeDetail=false; LiveWSALA64567996=90adf78df0f145b6be3d71a17a1ffdfd; NALA64567996fistvisitetime=1747322319148; NALA64567996visitecounts=1; NALA64567996IP=%7C112.10.248.233%7C; Hm_lvt_4fecd4bd0b0840b8187dca3933577306=1747322320; NALA64567996lastvisitetime=1747322321303; NALA64567996visitepages=2; ASP.NET_SessionId=5yiemi013byfimeyj33mjjlr; Token=27793CA6F9F0BABF; Account=13888888888; Avatar=http://oa.zgsmile.com/Images/account.jpg; Name=Admin（admin）; Appkey=f5ad2a74417c4076a25ef4cae92964a3; UserId=19; NickName=管理员";
-            this._RequestMessage.Headers.Add("Cookie", cookiestr);
-
+            //COOKIE
             if (_CookieCollection != null && _CookieCollection.Count > 0)
             {
                 //手动携带Cookie时 自动禁用HttpHandler的UseCookie
@@ -387,6 +394,27 @@ namespace X.Helper.Http
                 //        this._RequestMessage.Headers.Add("Cookie", $"{cookie.Name}={cookie.Value}");
                 //    }
                 //}
+            }
+
+            //ACCEPT
+            if (!string.IsNullOrEmpty(_Accept))
+            {
+                var acceptArr = _Accept.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (null != acceptArr && acceptArr.Length > 0)
+                {
+                    if (this._RequestMessage.Headers.Accept.Count > 0)
+                        this._RequestMessage.Headers.Accept.Clear();
+                    foreach (var item in acceptArr)
+                    {
+                        this._RequestMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(item.Trim()));
+                    }
+                }
+            }
+
+            //CONTENT-TYPE
+            if (!string.IsNullOrEmpty(_ContentType))
+            {
+                this._RequestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(_ContentType);
             }
         }
         

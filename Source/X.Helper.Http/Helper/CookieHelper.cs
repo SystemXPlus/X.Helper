@@ -24,12 +24,14 @@ namespace X.Helper.Http.Helper
             var result = string.Empty;
             foreach (var item in cookies)
             {
-                var bytes = encoding.GetBytes(item.Value);
+                //var bytes = encoding.GetBytes(item.Value);
                 //var value = HttpUtility.UrlEncode(bytes);
-                var value = HttpUtility.UrlEncode(encoding.GetString(bytes), encoding);
-                result += $"{item.Key}={value};";
+                //var value = HttpUtility.UrlEncode(encoding.GetString(bytes), encoding);
+                //result += $"{item.Key}={value};";
                 //result += $"{item.Key}={Uri.EscapeDataString(item.Value)};";
-                //result += $"{item.Key}={item.Value};";
+                if (!Helper.Common.IsIso88591Encoded(item.Value))
+                    throw new ArgumentException($"Cookie Value is not ISO88591 Encoded: {item.Value}");
+                result += $"{item.Key}={item.Value};";
             }
             return result;
         }
@@ -46,12 +48,14 @@ namespace X.Helper.Http.Helper
             var result = string.Empty;
             foreach (Cookie item in cookies)
             {
-                var bytes = encoding.GetBytes(item.Value);
+                //var bytes = encoding.GetBytes(item.Value);
                 //var value = HttpUtility.UrlEncode(bytes);
-                var value = HttpUtility.UrlEncode(encoding.GetString(bytes), encoding);
-                result += $"{item.Name}={value};";
+                //var value = HttpUtility.UrlEncode(encoding.GetString(bytes), encoding);
+                //result += $"{item.Name}={value};";
                 //result += $"{item.Name}={Uri.EscapeDataString(item.Value)};";
-                //result += $"{item.Name}={item.Value};";
+                if(!Helper.Common.IsIso88591Encoded(item.Value))
+                    throw new ArgumentException($"Cookie Value is not ISO88591 Encoded: {item.Value}");
+                result += $"{item.Name}={item.Value};";
             }
             return result;
         }
