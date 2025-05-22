@@ -227,7 +227,7 @@ namespace X.Helper.Http
             return this;
         }
         /// <summary>
-        /// 设置ContentType请求头
+        /// 设置请求ContentType请求头
         /// </summary>
         /// <param name="contentType"></param>
         /// <returns></returns>
@@ -286,26 +286,38 @@ namespace X.Helper.Http
             return this;
         }
 
-        ///// <summary>
-        ///// 设置编码
-        ///// </summary>
-        ///// <param name="encoding"></param>
-        ///// <returns></returns>
-        //public Client SetEncoding(Encoding encoding)
-        //{
-        //    this._Encoding = encoding;
-        //    return this;
-        //}
-        ///// <summary>
-        ///// 设置编码
-        ///// </summary>
-        ///// <param name="encoding"></param>
-        ///// <returns></returns>
-        //public Client SetEncoding(string encoding)
-        //{
-        //    this._Encoding = Encoding.GetEncoding(encoding);
-        //    return this;
-        //}
+        /// <summary>
+        /// 设置Cache-Control请求头
+        /// </summary>
+        /// <param name="cacheControl"></param>
+        /// <returns></returns>
+        public Client SetCacheControl(string cacheControl)
+        {
+            if(!string.IsNullOrEmpty(cacheControl))
+                _CacheControl = cacheControl;
+            return this;
+        }
+
+        /// <summary>
+        /// 设置编码
+        /// </summary>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public Client SetEncoding(Encoding encoding)
+        {
+            this._Encoding = encoding;
+            return this;
+        }
+        /// <summary>
+        /// 设置编码
+        /// </summary>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public Client SetEncoding(string encoding)
+        {
+            this._Encoding = Encoding.GetEncoding(encoding);
+            return this;
+        }
         /// <summary>
         /// 设置编码
         /// </summary>

@@ -28,14 +28,21 @@ namespace X.Helper.Http
         {
             if (handler == null)
             {
-                _HttpHandler = new HttpClientHandler();
+                this._HttpHandler = new HttpClientHandler();
                 //默认开启
+
+#if NET6_0_OR_GREATER
+                this._HttpHandler.AutomaticDecompression = DecompressionMethods.All;
+#else
+                this._HttpHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate | DecompressionMethods.None;
+#endif
                 //_HttpHandler.UseCookies = false;
             }
             else
             {
                 _HttpHandler = handler;
             }
+
         }
         public HttpHandler UseProxy(WebProxy proxy)
         {

@@ -23,7 +23,7 @@ namespace X.Helper.Http
 
         //private CookieContainer cookieContainer;
 
-        private Uri _Uri { get; set; }
+        public Uri _Uri { get; private set; }
         private Enums.HttpMethod _Method { get; set; } = Enums.HttpMethod.GET;
         private string _Referer { get; set; }
         private string _Origin { get; set; }
@@ -59,6 +59,10 @@ namespace X.Helper.Http
         /// 请求的Accept-Language
         /// </summary>
         private string _AcceptLanguage { get; set; } = "zh-CN,zh;q=0.9,ja;q=0.8,zh-TW;q=0.7,en;q=0.6";
+        /// <summary>
+        /// 请求的Cache-Control
+        /// </summary>
+        private string _CacheControl { get; set; } = "";
 
         private MemoryStream _StreamContent;
         /// <summary>
@@ -125,7 +129,7 @@ namespace X.Helper.Http
         private HttpResponseMessage _ResponseMessage { get; set; }
 
 
-        private bool _DetectEncodingFromByteOrderMarks = false;
+        private bool _DetectEncodingFromByteOrderMarks = true;
 
         #endregion
 
@@ -144,9 +148,13 @@ namespace X.Helper.Http
         {
 
         }
+        public Client (string url, HttpHandler handler) : this(uri: new Uri(url), handler: handler.Handler)
+        {
 
+        }
         public Client(string url, HttpMessageHandler handler) : this(uri: new Uri(url), handler: handler)
         {
+
         }
 
         public Client(Uri uri, HttpMessageHandler handler)
@@ -228,7 +236,7 @@ namespace X.Helper.Http
             {
                 System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls;
             }
-
+            
             CreateRequestMessage();
             CreateHeader();
 
@@ -243,9 +251,6 @@ namespace X.Helper.Http
             var result = new Result();
             try
             {
-                // 发送前检查请求头 
-                //var cookieHeader = _RequestMessage.Headers.GetValues("Cookie").FirstOrDefault();
-                //Console.WriteLine($"即将发送的Cookie头: {cookieHeader ?? "NULL"}");
                 using (this._ResponseMessage = await _HttpClient.SendAsync(_RequestMessage))
                 {
                     //处理ResponseMessage返回Result
@@ -359,13 +364,6 @@ namespace X.Helper.Http
         {
             _RequestMessage = new HttpRequestMessage(new HttpMethod(this._Method.ToString()), _Uri);
 
-            if (!string.IsNullOrEmpty(_Referer))
-                _RequestMessage.Headers.Add("Referer", _Referer);
-            if (!string.IsNullOrEmpty(_UserAgent))
-                _RequestMessage.Headers.Add("User-Agent", _UserAgent);
-            if (!string.IsNullOrEmpty(_Origin))
-                _RequestMessage.Headers.Add("Origin", _Origin);
-            _RequestMessage.Headers.Add("Connection", _KeepAlive ? "Keep-Alive" : "close");
 
             if (this._Method != Enums.HttpMethod.GET)
             {
@@ -393,12 +391,21 @@ namespace X.Helper.Http
         /// </summary>
         private void CreateHeader()
         {
+            if (!string.IsNullOrEmpty(_Referer))
+                _RequestMessage.Headers.Add("Referer", _Referer);
+            if (!string.IsNullOrEmpty(_UserAgent))
+                _RequestMessage.Headers.Add("User-Agent", _UserAgent);
+            if (!string.IsNullOrEmpty(_Origin))
+                _RequestMessage.Headers.Add("Origin", _Origin);
+            _RequestMessage.Headers.Add("Connection", _KeepAlive ? "Keep-Alive" : "close");
+
+
             CreateHeaderCookie();
             CreateHeaderAccept();
             CreateHeaderAcceptCharset();
             CreateHeaderAcceptEncoding();
             CreateHeaderAcceptLanguage();
-
+            CreateHeaderCacheControl();
 
 
 
@@ -476,10 +483,10 @@ namespace X.Helper.Http
                             {
                                 var value = tempArr[0].Trim();
 
-                                if (tempArr[0].Contains('='))
+                                if (tempArr[1].Contains('='))
                                 {
-                                    var tempArr2 = tempArr[0].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (tempArr2.Length > 0)
+                                    var tempArr2 = tempArr[1].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                                    if (tempArr2.Length > 1)
                                     {
                                         if (!double.TryParse(tempArr2[1].Trim(), out quality))
                                             quality = 1;
@@ -518,10 +525,10 @@ namespace X.Helper.Http
                             {
                                 var value = tempArr[0].Trim();
                                
-                                if (tempArr[0].Contains('='))
+                                if (tempArr[1].Contains('='))
                                 {
-                                    var tempArr2 = tempArr[0].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (tempArr2.Length > 0)
+                                    var tempArr2 = tempArr[1].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                                    if (tempArr2.Length > 1)
                                     {
                                         if (!double.TryParse(tempArr2[1].Trim(), out quality))
                                             quality = 1;
@@ -563,7 +570,7 @@ namespace X.Helper.Http
                                 if (tempArr[1].Contains('='))
                                 {
                                     var tempArr2 = tempArr[1].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (tempArr2.Length > 0)
+                                    if (tempArr2.Length > 1)
                                     {
                                         if (!double.TryParse(tempArr2[1].Trim(), out quality))
                                             quality = 1;
@@ -579,6 +586,16 @@ namespace X.Helper.Http
                     }
                 }
             }
+        }
+
+        private void CreateHeaderCacheControl()
+        {
+            if (string.IsNullOrEmpty(_CacheControl))
+                return;
+            var arr = _CacheControl.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            if (arr == null || arr.Length == 0)
+                return;
+            this._RequestMessage.Headers.Add("Cache-Control",arr.Select(a=>a.Trim()));
         }
 
         #endregion
@@ -616,6 +633,12 @@ namespace X.Helper.Http
         {
             if (this._StreamContent == null && !this._StreamContent.CanRead)
                 return;
+            var encoding = _Encoding;
+            if (this._ResponseMessage.Content.Headers.ContentType != null)
+            {
+                if (this._ResponseMessage.Content.Headers.ContentType.CharSet != null)
+                    encoding = Encoding.GetEncoding(this._ResponseMessage.Content.Headers.ContentType.CharSet);
+            }
             using (var reader = new System.IO.StreamReader(this._StreamContent, _Encoding, this._DetectEncodingFromByteOrderMarks))
             {
                 result.TextContent = await reader.ReadToEndAsync();
