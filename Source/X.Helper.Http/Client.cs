@@ -169,6 +169,7 @@ namespace X.Helper.Http
                 _HttpClient = new HttpClient();
             }
 
+
             if (uri != null)
             {
                 this._Uri = uri;
@@ -251,6 +252,8 @@ namespace X.Helper.Http
             var result = new Result();
             try
             {
+
+                _HttpClient.Timeout = this._Timeout;
                 using (this._ResponseMessage = await _HttpClient.SendAsync(_RequestMessage))
                 {
                     //处理ResponseMessage返回Result
@@ -270,17 +273,25 @@ namespace X.Helper.Http
                     }
                 }
             }
+            catch(TaskCanceledException ex)
+            {
+                var errMsg = $"请求取消：{ex.Message}";
+                if(ex.InnerException != null)
+                    errMsg += $" -> {ex.InnerException.Message}";
+                return new Result
+                {
+                    StatusDescription = errMsg
+                };
+            }
             catch (Exception ex)
             {
                 var errMsg = $"请求失败：{ex.Message}";
                 if (ex.InnerException != null)
                     errMsg += $" -> {ex.InnerException.Message}";
-                tmpResult = new Result
+                return new Result
                 {
                     StatusDescription = errMsg
-                }
-            ;
-                return tmpResult;
+                };
             }
             return result;
         }
@@ -371,7 +382,7 @@ namespace X.Helper.Http
                     _ContentType = "text/plain";
                 _RequestMessage.Content = new StringContent("", _Encoding, _ContentType);
             }
-
+            
             //增加HTTPS请求的特殊处理，强制使用Http1.0 BY QQ607432
             if (this._Uri.ToString().StartsWith("https", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -644,7 +655,6 @@ namespace X.Helper.Http
                 result.TextContent = await reader.ReadToEndAsync();
                 this._StreamContent.Position = 0;
             }
-            //this._StreamContent.Position = 0;
         }
 
         private async Task GetStreamContent(Result result)

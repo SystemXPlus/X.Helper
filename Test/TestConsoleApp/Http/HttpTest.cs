@@ -38,9 +38,9 @@ namespace TestConsoleApp.Http
                 //var cookies = X.Helper.Http.Helper.CookieHelper.GetCookieCollection(cookiestr);
                 client.SetCookie(cookiestr)
                     .SetEncoding("utf-8")
-                    //.SetAccept("*/*")
-                    //.SetAcceptEncoding("gzip, deflate")
-                    //.SetAcceptLanguage("zh-CN,zh;q=0.9,ja;q=0.8,zh-TW;q=0.7,en;q=0.6")
+                    .SetAccept("*/*")
+                    .SetAcceptEncoding("gzip, deflate")
+                    .SetAcceptLanguage("zh-CN,zh;q=0.9,ja;q=0.8,zh-TW;q=0.7,en;q=0.6")
 
                     //.SetContentType("text/html; charset=utf-8")
                    //.SetCacheControl(" no-transform , max-age=0");
