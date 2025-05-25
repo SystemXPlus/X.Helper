@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace X.Helper.Http.Helper
         {
             try
             {
-                if(input == null)
+                if (input == null)
                 {
                     return false;
                 }
@@ -28,6 +29,21 @@ namespace X.Helper.Http.Helper
                 // 如果在解码或编码过程中发生异常，则说明不是ISO-8859-1编码
                 return false;
             }
+        }
+
+
+
+        public static Dictionary<string, object> GetPropertiesAsDictionary(object obj)
+        {
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            Type type = obj.GetType();
+
+            foreach (PropertyInfo property in type.GetProperties())
+            {
+                properties.Add(property.Name, property.GetValue(obj));
+            }
+
+            return properties;
         }
     }
 }

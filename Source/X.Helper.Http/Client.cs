@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Net.Security;
 using System.Runtime.CompilerServices;
@@ -16,123 +17,7 @@ namespace X.Helper.Http
 {
     public partial class Client : IDisposable
     {
-        #region 私有字段
-        private readonly HttpClient _HttpClient;
-
-        private readonly HttpMessageHandler _HttpHandler;
-
-        //private CookieContainer cookieContainer;
-
-        public Uri _Uri { get; private set; }
-        private Enums.HttpMethod _Method { get; set; } = Enums.HttpMethod.GET;
-        private string _Referer { get; set; }
-        private string _Origin { get; set; }
-        /// <summary>
-        /// 请求的UserAgent
-        /// </summary>
-        private string _UserAgent { get; set; } = "X.Helper.Http.Client";
-        /// <summary>
-        /// 请求的IP地址
-        /// </summary>
-        private IPEndPoint _IPEndPoint { get; set; } = null;
-        /// <summary>
-        /// 请求的ContentType
-        /// </summary>
-        private string _ContentType { get; set; }
-        /// <summary>
-        /// 请求编码格式
-        /// </summary>
-        private Encoding _Encoding { get; set; } = Encoding.UTF8;
-        /// <summary>
-        /// 请求的Accept
-        /// </summary>
-        private string _Accept { get; set; } = "*/*";
-        /// <summary>
-        /// 请求的Accept-Charset
-        /// </summary>
-        private string _AcceptCharset { get; set; } = "utf-8,gbk,gb2312,iso-8859-1; q=0.9,*; q=0.1";
-        /// <summary>
-        /// 请求的Accept-Encoding
-        /// </summary>
-        private string _AcceptEncoding { get; set; } = "gzip, deflate, br";
-        /// <summary>
-        /// 请求的Accept-Language
-        /// </summary>
-        private string _AcceptLanguage { get; set; } = "zh-CN,zh;q=0.9,ja;q=0.8,zh-TW;q=0.7,en;q=0.6";
-        /// <summary>
-        /// 请求的Cache-Control
-        /// </summary>
-        private string _CacheControl { get; set; } = "";
-
-        private MemoryStream _StreamContent;
-        /// <summary>
-        /// 待上传文件列表
-        /// </summary>
-        private List<FileInfo> _Files { get; set; } = new List<FileInfo>();
-        /// <summary>
-        /// 下载文件时是否自动创建目录
-        /// </summary>
-        private bool _AutoCreateDirectory { get; set; } = false;
-
-        //使用HttpRequestMessage.Headers处理
-
-        //private WebHeaderCollection _WebHeaderCollection;
-        //private WebHeaderCollection WebHeaderCollection
-        //{
-        //    get
-        //    {
-        //        if (_WebHeaderCollection == null)
-        //        {
-        //            _WebHeaderCollection = new WebHeaderCollection();
-        //        }
-        //        return _WebHeaderCollection;
-        //    }
-        //    set
-        //    {
-        //        _WebHeaderCollection = value;
-        //    }
-        //}
-
-        private CookieCollection _CookieCollection;
-        private CookieCollection CookieCollection
-        {
-            get
-            {
-                if (_CookieCollection == null)
-                {
-                    _CookieCollection = new CookieCollection();
-                }
-                return _CookieCollection;
-            }
-            set
-            {
-                _CookieCollection = value;
-            }
-        }
-
-        /**
-         * 在HTTP/1.0中，Keep-Alive功能是默认关闭的，需要在请求头中添加Connection: Keep-Alive来启用。
-         * 而在HTTP/1.1中，Keep-Alive功能默认启用，如果需要关闭，则需要在请求头中添加Connection: close‌
-         * */
-        /// <summary>
-        /// KeepAlive
-        /// <para>在HTTP/1.0中，Keep-Alive功能是默认关闭的，需要在请求头中添加Connection: Keep-Alive来启用。</para>
-        /// <para>而在HTTP/1.1中，Keep-Alive功能默认启用，如果需要关闭，则需要在请求头中添加Connection: close‌</para>
-        /// </summary>
-        private bool _KeepAlive { get; set; } = true;
-
-        private Version _Version { get; set; } = HttpVersion.Version11;
-
-        private TimeSpan _Timeout = TimeSpan.FromSeconds(100.0);
-
-        private HttpRequestMessage _RequestMessage { get; set; }
-        private HttpResponseMessage _ResponseMessage { get; set; }
-
-
-        private bool _DetectEncodingFromByteOrderMarks = true;
-
-        #endregion
-
+        
         #region 构造
         public Client() : this(uri: null, handler: null)
         {
@@ -247,7 +132,7 @@ namespace X.Helper.Http
         {
             PreRequest();
 
-            Result tmpResult;
+            CreateContent();
 
             var result = new Result();
             try
@@ -296,12 +181,12 @@ namespace X.Helper.Http
             return result;
         }
 
-        public async Task<Result> RequestTextContent()
+        public async Task<Result> RequestStringContent()
         {
             var result = await RequestAsync();
             if (result.IsSuccess)
             {
-                await GetTextContent(result);
+                await GetStringContent(result);
             }
             return result;
         }
@@ -376,12 +261,7 @@ namespace X.Helper.Http
             _RequestMessage = new HttpRequestMessage(new HttpMethod(this._Method.ToString()), _Uri);
 
 
-            if (this._Method != Enums.HttpMethod.GET)
-            {
-                if (string.IsNullOrEmpty(_ContentType))
-                    _ContentType = "text/plain";
-                _RequestMessage.Content = new StringContent("", _Encoding, _ContentType);
-            }
+
             
             //增加HTTPS请求的特殊处理，强制使用Http1.0 BY QQ607432
             if (this._Uri.ToString().StartsWith("https", StringComparison.CurrentCultureIgnoreCase))
@@ -396,6 +276,13 @@ namespace X.Helper.Http
 
 
         }
+
+
+
+
+        #endregion
+
+        #region 创建请求HEADER
 
         /// <summary>
         /// 创建请求Header配置
@@ -535,7 +422,7 @@ namespace X.Helper.Http
                             if (tempArr.Length > 0)
                             {
                                 var value = tempArr[0].Trim();
-                               
+
                                 if (tempArr[1].Contains('='))
                                 {
                                     var tempArr2 = tempArr[1].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
@@ -577,7 +464,7 @@ namespace X.Helper.Http
                             if (tempArr.Length > 0)
                             {
                                 var value = tempArr[0].Trim();
-                                
+
                                 if (tempArr[1].Contains('='))
                                 {
                                     var tempArr2 = tempArr[1].Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
@@ -606,7 +493,7 @@ namespace X.Helper.Http
             var arr = _CacheControl.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             if (arr == null || arr.Length == 0)
                 return;
-            this._RequestMessage.Headers.Add("Cache-Control",arr.Select(a=>a.Trim()));
+            this._RequestMessage.Headers.Add("Cache-Control", arr.Select(a => a.Trim()));
         }
 
         #endregion
@@ -640,7 +527,7 @@ namespace X.Helper.Http
             //}
         }
 
-        private async Task GetTextContent(Result result)
+        private async Task GetStringContent(Result result)
         {
             if (this._StreamContent == null && !this._StreamContent.CanRead)
                 return;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,13 +22,17 @@ namespace TestConsoleApp
             //Extension.EnumExtensionTest.TestGetEnumTypeFromString();
 
             //Http.HttpTest.HttpGetTest();
-            Http.HttpTest.HttpGetWithCookieTest();
+            //Http.HttpTest.HttpGetWithCookieTest();
             //Http.HttpTest.HttpGet301Test();
             //Http.HttpTest.HttpPostTest();
             //Http.HttpTest.HttpDownloadFileTest();
             //Http.HttpTest.HttpDownloadFileWithCookieTest();
             //TestTemp();
-
+            var path = @"d:\abc\test\abc.text";
+            var filename = path.Substring(path.LastIndexOf('\\') + 1);
+            var fileextensionname = path.Substring(path.LastIndexOf('.') + 1);
+            Console.WriteLine(filename);
+            Console.WriteLine(fileextensionname);
         }
 
         static void TestTemp()

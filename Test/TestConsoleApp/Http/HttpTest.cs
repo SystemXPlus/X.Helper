@@ -56,7 +56,7 @@ namespace TestConsoleApp.Http
                 //client.SetCookie("Token", "A92C607205D8445F");
                 //client.SetCookie("Appkey", "f5ad2a74417c4076a25ef4cae92964a3");
                 //client.SetCookie("ActivityCode", "374693EAC7E5889467EBF6BCD7D3D74B");
-                using (var result = client.RequestTextContent().Result)
+                using (var result = client.RequestStringContent().Result)
                 {
                     ShowResult(result);
                 }
@@ -72,7 +72,7 @@ namespace TestConsoleApp.Http
             {
                 
                 client.SetMethod(X.Helper.Http.Enums.HttpMethod.GET);
-                using (var result = client.RequestTextContent().Result)
+                using (var result = client.RequestStringContent().Result)
                 {
                     ShowResult(result);
                 }
@@ -86,7 +86,7 @@ namespace TestConsoleApp.Http
             using (var client = new X.Helper.Http.Client(url, handler.Handler))
             {
                 client.SetMethod(X.Helper.Http.Enums.HttpMethod.POST);
-                using (var result = client.RequestTextContent().Result)
+                using (var result = client.RequestStringContent().Result)
                 {
                     ShowResult(result);
                 }
