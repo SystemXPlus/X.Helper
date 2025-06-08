@@ -10,7 +10,7 @@ using System.Web;
 
 namespace X.Helper.Http.Helper
 {
-    public class CookieHelper
+    public static class CookieHelper
     {
         /// <summary>
         /// 从COOKIE字典中获取拼接后的COOKIE字符串

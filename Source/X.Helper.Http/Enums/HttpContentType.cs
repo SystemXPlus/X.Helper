@@ -8,57 +8,77 @@ using System.Threading.Tasks;
 
 namespace X.Helper.Http.Enums
 {
+    /// <summary>
+    /// 请求正文内容类型
+    /// </summary>
+    [Flags]
     public enum HttpContentType
     {
         /// <summary>
-        /// text/html
+        /// 纯文本
         /// </summary>
-        [Display(Name ="text/html")]
-        TEXT_HTML,
+        [Description("text/plain")]
+        RAW_TEXT,
         /// <summary>
-        /// text/plan
+        /// JSON文本
         /// </summary>
-        [Display(Name = "text/plain")]
-        TEXT_PLAN,
+        [Description("application/json")]
+        RAW_JSON,
         /// <summary>
-        /// text/json
+        /// XML文本
         /// </summary>
-        [Display(Name = "text/json")]
-        TEXT_JSON,
+        [Description("application/xml")]
+        RAW_XML,
         /// <summary>
-        /// text/css
+        /// HTML文本
         /// </summary>
-        //[Display(Name = "text/css")]
-        //TEXT_CSS,
+        [Description("text/html")]
+        RAW_HTML,
+
         /// <summary>
-        /// application/x-www-form-urlencoded
+        /// JavaScript文本
         /// </summary>
-        [Display(Name = "application/x-www-form-urlencoded")]
-        APPLICATION_X_WWW_FORM_URLENCODED,
+        [Description("application/javascript")]
+        RAW_JAVASCRIPT,
+
         /// <summary>
-        /// application/json
+        /// 表单数据/键值对
         /// </summary>
-        [Display(Name = "application/json")]
-        APPLICATION_JSON,
+        [Description("application/x-www-form-urlencoded")]
+        X_WWW_FORM_URLENCODED,
         /// <summary>
-        /// application/xml
+        /// 多部分表单数据/键值对
         /// </summary>
-        //[Display(Name = "application/xml")]
-        //APPLICATION_XML,
-        /// <summary>
-        /// application/javascript
-        /// </summary>
-        //[Display(Name = "application/javascript")]
-        //APPLICATION_JAVASCRIPT,
-        /// <summary>
-        /// application/octet-stream
-        /// </summary>
-        [Display(Name = "application/octet-stream")]
-        APPLICATION_OCTET_STREAM,
-        /// <summary>
-        /// multipart/form-data
-        /// </summary>
-        [Display(Name = "multipart/form-data")]
+        [Description("multipart/form-data")]
         MULTIPART_FORM_DATA,
+        /// <summary>
+        /// 二进制数据
+        /// </summary>
+        [Description("application/octet-stream")]
+        BINARY,
+
+
+
+        ///// <summary>
+        ///// 文本内容
+        ///// </summary>
+        //STRING,
+        ///// <summary>
+        ///// 键值对字典
+        ///// </summary>
+        //DICTIONARY,
+        ///// <summary>
+        ///// 数据流
+        ///// </summary>
+        //STREAM,
+        ///// <summary>
+        ///// 字节数组
+        ///// </summary>
+        //BYTE_ARRAY,
+        ///// <summary>
+        ///// 对象
+        ///// </summary>
+        //OBJECT,
+
     }
 }

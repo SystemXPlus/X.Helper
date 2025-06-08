@@ -122,23 +122,24 @@ namespace X.Helper.Http
             {
                 System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls;
             }
-            
-            CreateRequestMessage();
-            CreateHeader();
 
+            CreateRequestMessage();
+            CreateRequestHeader();
+            CreateRequestContent();
         }
 
         public async Task<Result> RequestAsync()
         {
             PreRequest();
 
-            CreateContent();
+            
 
             var result = new Result();
             try
             {
 
                 _HttpClient.Timeout = this._Timeout;
+
                 using (this._ResponseMessage = await _HttpClient.SendAsync(_RequestMessage))
                 {
                     //处理ResponseMessage返回Result
@@ -255,7 +256,7 @@ namespace X.Helper.Http
 
         #endregion
 
-        #region 创建请求
+        #region 创建请求消息体
         private void CreateRequestMessage()
         {
             _RequestMessage = new HttpRequestMessage(new HttpMethod(this._Method.ToString()), _Uri);
@@ -276,8 +277,13 @@ namespace X.Helper.Http
 
 
         }
-
-
+        /// <summary>
+        /// 创建请求内容
+        /// </summary>
+        private void CreateRequestContent()
+        {
+            this._RequestHttpContent = new Helper.ContentHelper(_RequestBodyContentType, _RequestContentParams).GetContent();
+        }
 
 
         #endregion
@@ -287,7 +293,7 @@ namespace X.Helper.Http
         /// <summary>
         /// 创建请求Header配置
         /// </summary>
-        private void CreateHeader()
+        private void CreateRequestHeader()
         {
             if (!string.IsNullOrEmpty(_Referer))
                 _RequestMessage.Headers.Add("Referer", _Referer);

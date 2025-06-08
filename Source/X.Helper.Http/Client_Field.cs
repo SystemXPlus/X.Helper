@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using X.Helper.Http.Entity;
 
 namespace X.Helper.Http
 {
@@ -46,28 +47,29 @@ namespace X.Helper.Http
         #endregion
 
         #region REQUEST
+        ///// <summary>
+        ///// 请求的正文内容文本
+        ///// </summary>
+        //private string _ContentString { get; set; } = string.Empty;
+        ///// <summary>
+        ///// 请求的正文内容对象
+        ///// </summary>
+        //private object _ContentObject { get; set; }
+        ///// <summary>
+        ///// 请求的正文内容字典
+        ///// </summary>
+        //private Dictionary<string, string> _ContentDictionary { get; set; } 
         /// <summary>
-        /// 请求的正文内容类型
+        /// 请求的正文内容参数列表
         /// </summary>
-        private Enums.RequestContentType _RequestContentType { get; set; } = Enums.RequestContentType.STRING;
-        /// <summary>
-        /// 请求的正文内容文本
-        /// </summary>
-        private string _ContentString { get; set; } = string.Empty;
-        /// <summary>
-        /// 请求的正文内容对象
-        /// </summary>
-        private object _ContentObject { get; set; }
-        /// <summary>
-        /// 请求的正文内容字典
-        /// </summary>
-        private Dictionary<string, string> _ContentDictionary { get; set; } 
+        private List<HttpContentParam> _RequestContentParams { get; set; } = new List<HttpContentParam>();
+        private HttpContent _RequestHttpContent { get; set; } = null;
 
-
+        private Enums.HttpContentType _RequestBodyContentType { get; set; } = Enums.HttpContentType.RAW_JSON;
         /// <summary>
         /// 请求的ContentType
         /// </summary>
-        private MediaTypeHeaderValue _ContentType { get; set; } = new MediaTypeHeaderValue("text/html") { CharSet = "utf-8" };
+        private MediaTypeHeaderValue _ContentType { get; set; } = new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" };
         /// <summary>
         /// 请求编码格式
         /// </summary>

@@ -32,7 +32,6 @@ namespace X.Helper.Http.Helper
         }
 
 
-
         public static Dictionary<string, object> GetPropertiesAsDictionary(object obj)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
@@ -40,6 +39,26 @@ namespace X.Helper.Http.Helper
 
             foreach (PropertyInfo property in type.GetProperties())
             {
+                if (property.MemberType != MemberTypes.Property || !property.CanRead)
+                {
+                    // 如果不是属性或属性不可读，则跳过
+                    continue;
+                }
+                if(property.PropertyType.IsGenericType)
+                {
+                    // 处理泛型
+                        continue;
+                }
+                if (property.GetIndexParameters().Length > 0)
+                {
+                    // 如果是索引器，则跳过
+                    continue;
+                }
+                if(property.GetGetMethod() == null || !property.GetGetMethod().IsPublic)
+                {
+                    // 如果没有公共的 getter 方法，则跳过
+                    continue;
+                }
                 properties.Add(property.Name, property.GetValue(obj));
             }
 

@@ -28,11 +28,7 @@ namespace TestConsoleApp
             //Http.HttpTest.HttpDownloadFileTest();
             //Http.HttpTest.HttpDownloadFileWithCookieTest();
             //TestTemp();
-            var path = @"d:\abc\test\abc.text";
-            var filename = path.Substring(path.LastIndexOf('\\') + 1);
-            var fileextensionname = path.Substring(path.LastIndexOf('.') + 1);
-            Console.WriteLine(filename);
-            Console.WriteLine(fileextensionname);
+            
         }
 
         static void TestTemp()

@@ -227,50 +227,7 @@ namespace X.Helper.Http
             this._UserAgent = userAgent;
             return this;
         }
-        public Client SetContentType(string mediaType)
-        {
-            if (!string.IsNullOrEmpty(mediaType))
-            {
-                SetContentType(mediaType, _Encoding.WebName);
-            }
-            return this;
-        }
-        /// <summary>
-        /// 设置请求ContentType请求头
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <returns></returns>
-        public Client SetContentType(string mediaType, string charset)
-        {
-            if (!string.IsNullOrEmpty(mediaType))
-            {
-                var contentType = new MediaTypeHeaderValue(mediaType);
-                if (!string.IsNullOrEmpty(charset))
-                {
-                    this._Encoding = Encoding.GetEncoding(charset);
-                }
-                contentType.CharSet = _Encoding.WebName;
-            }
-            return this;
-        }
-
-        /// <summary>
-        /// 设置请求ContentType请求头
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <returns></returns>
-        public Client SetContentType(MediaTypeHeaderValue contentType)
-        {
-            if (contentType != null)
-            {
-                this._ContentType = contentType;
-                if (!string.IsNullOrEmpty(contentType.CharSet))
-                {
-                    this._Encoding = Encoding.GetEncoding(contentType.CharSet);
-                }
-            }
-            return this;
-        }
+        
         /// <summary>
         /// 设置Accept请求头
         /// </summary>
@@ -397,105 +354,8 @@ namespace X.Helper.Http
         }
 
 
-        #region 请求内容
 
-        public Client SetContent(string content)
-        {
-            if(null == content)
-                throw new ArgumentException("content is null");
-            this._ContentString = content;
-            this._RequestContentType = Enums.RequestContentType.STRING;
-            return this;
-        }
 
-        public Client SetContent(Dictionary<string,string> content)
-        {
-            if(content == null) throw new ArgumentException("content is null");
-            this._ContentDictionary = content;
-            this._RequestContentType = Enums.RequestContentType.DICTIONARY;
-            return this;
-        }
-
-        public Client SetContent<T>(T content) where T : class, new()
-        {
-            if(content == null)
-                throw new ArgumentException("content is null");
-            this._ContentObject = content;
-            this._RequestContentType = Enums.RequestContentType.OBJECT;
-            return this;
-        }
-
-        #endregion
-
-        #region 文件
-        /// <summary>
-        /// 下载文件时目录不存在是否自动创建目录
-        /// </summary>
-        /// <param name="autoCreateDirectory"></param>
-        /// <returns></returns>
-        public Client SetAutoCreateDirectory(bool autoCreateDirectory)
-        {
-            this._AutoCreateDirectory = autoCreateDirectory;
-            return this;
-        }
-        /// <summary>
-        /// 设置多部分表单数据（MultipartFormData）的边界符
-        /// </summary>
-        /// <param name="boundary"></param>
-        /// <returns></returns>
-        public Client SetMultipartFormDataBoundary(string boundary)
-        {
-            if (!string.IsNullOrEmpty(boundary))
-            {
-                this._MultipartFormDataBoundary = boundary;
-            }
-            return this;
-        }
-
-        /// <summary>
-        /// 添加文件到上传文件列表
-        /// </summary>
-        /// <param name="filePath">文件完整路径</param>
-        /// <returns></returns>
-        public Client AddFile(string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath))
-                throw new ArgumentException(@"filePath is null or empty");
-            if (!filePath.Contains("\\"))
-                throw new ArgumentException(filePath + " is not a valid file path");
-
-            var name = filePath.Substring(filePath.IndexOf("\\") + 1);
-            this._Files.Add(new KeyValuePair<string, string>(name, filePath));
-
-            return this;
-        }
-        /// <summary>
-        /// 添加文件到上传文件列表
-        /// </summary>
-        /// <param name="name">提交上传文件使用的名称</param>
-        /// <param name="fileInfo">文件完整路径</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public Client AddFile(string name, string filePath)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentException(name + " is null or empty");
-            }
-            if (string.IsNullOrEmpty(filePath))
-            {
-                throw new ArgumentException(filePath + " is null or empty");
-            }
-            if (!filePath.Contains("\\"))
-            {
-                throw new ArgumentException(filePath + " is not a valid file path");
-            }
-
-            this._Files.Add(new KeyValuePair<string, string>(name, filePath));
-
-            return this;
-        }
-
-        #endregion
+        
     }
 }
