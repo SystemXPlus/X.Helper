@@ -15,9 +15,12 @@ namespace X.Helper.Http.Helper
     {
         private HttpContentType HttpContentType { get; set; }
         private List<HttpContentParam> HttpContentParams { get; set; }
-        public ContentHelper(HttpContentType contentType, List<HttpContentParam> param)
+        private Encoding Encoding { get; set; }
+        public ContentHelper(HttpContentType contentType, List<HttpContentParam> contentParam, Encoding encoding)
         {
-
+            this.HttpContentType = contentType;
+            this.HttpContentParams = contentParam;
+            this.Encoding = encoding ?? Encoding.UTF8;
         }
         public HttpContent GetContent()
         {
@@ -51,7 +54,7 @@ namespace X.Helper.Http.Helper
                 default:
                     throw new NotSupportedException($"不支持的HTTP内容类型: {this.HttpContentType}");
             }
-            return contentCreater.Create(this.HttpContentParams);
+            return contentCreater.Create(this.HttpContentParams,this.Encoding);
         }
     }
 }

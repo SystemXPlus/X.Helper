@@ -8,9 +8,19 @@ using X.Helper.Http.Enums;
 namespace X.Helper.Http.Entity
 {
     public class HttpContentParam
-
     {
-
+        public HttpContentParam(string value) : this(null, value) { }
+        public HttpContentParam(string name, string value)
+        {
+            this.Name = name;
+            this.Value = value;
+        }
+        public HttpContentParam(object value) : this(null, value) { }
+        public HttpContentParam(string name, object value)
+        {
+            this.Name = name;
+            this.Value = value;
+        }
 
         public string Name { get; set; }
         public object Value { get; set; }
@@ -32,6 +42,7 @@ namespace X.Helper.Http.Entity
                 //    Type = HttpContentParamType.Number;
                 //    break;
                 case string _:
+                case StringBuilder _:
                     Type = HttpContentParamType.String;
                     break;
                 case int _:

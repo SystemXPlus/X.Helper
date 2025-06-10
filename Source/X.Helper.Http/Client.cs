@@ -257,6 +257,9 @@ namespace X.Helper.Http
         #endregion
 
         #region 创建请求消息体
+        /// <summary>
+        /// 初始化请求消息体
+        /// </summary>
         private void CreateRequestMessage()
         {
             _RequestMessage = new HttpRequestMessage(new HttpMethod(this._Method.ToString()), _Uri);
@@ -282,7 +285,7 @@ namespace X.Helper.Http
         /// </summary>
         private void CreateRequestContent()
         {
-            this._RequestHttpContent = new Helper.ContentHelper(_RequestBodyContentType, _RequestContentParams).GetContent();
+            this._RequestHttpContent = new Helper.ContentHelper(_RequestBodyContentType, _RequestContentParams, _Encoding).GetContent();
         }
 
 
