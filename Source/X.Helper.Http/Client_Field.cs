@@ -67,8 +67,13 @@ namespace X.Helper.Http
 
         private Enums.HttpContentType _RequestBodyContentType { get; set; } = Enums.HttpContentType.RAW_JSON;
         /// <summary>
+        /// 自定义请求头列表
+        /// </summary>
+        private List<Entity.CustomRequestHeader> _CustomRequestHeaders { get; set; } = new List<Entity.CustomRequestHeader>();
+        /// <summary>
         /// 请求的ContentType
         /// </summary>
+        [Obsolete("弃用，请使用_RequestBodyContentType", true)]
         private MediaTypeHeaderValue _ContentType { get; set; } = new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" };
         /// <summary>
         /// 请求编码格式

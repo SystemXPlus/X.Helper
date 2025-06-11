@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -146,11 +147,21 @@ namespace X.Helper.Http
         /// <returns></returns>
         public Client SetHeader(string name, string value)
         {
-            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(name))
             {
-                if (this._RequestMessage.Headers.Contains(name))
-                    this._RequestMessage.Headers.Remove(name);
-                this._RequestMessage.Headers.Add(name, value);
+                //允许添加重复NAME 最终在发起请求时处理
+                //if (this._CustomRequestHeaders.Any(l=>l.Name.Equals(name)))
+                //    this._CustomRequestHeaders.RemoveAll(l => l.Name.Equals(name));
+                this._CustomRequestHeaders.Add(new Entity.CustomRequestHeader(name, value));
+            }
+            return this;
+        }
+
+        public Client SetHeader(string name, IEnumerable<string> value)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                this._CustomRequestHeaders.Add(new Entity.CustomRequestHeader(name, value));
             }
             return this;
         }
@@ -169,9 +180,7 @@ namespace X.Helper.Http
                 {
                     if (!string.IsNullOrEmpty(item.Key) && !string.IsNullOrEmpty(item.Value))
                     {
-                        if (this._RequestMessage.Headers.Contains(item.Key))
-                            this._RequestMessage.Headers.Remove(item.Key);
-                        this._RequestMessage.Headers.Add(item.Key, item.Value);
+                        SetHeader(item.Key, item.Value);
                     }
                 }
             }
@@ -295,7 +304,7 @@ namespace X.Helper.Http
         public Client SetEncoding(Encoding encoding)
         {
             this._Encoding = encoding;
-            this._ContentType.CharSet = this._Encoding.WebName;
+            //this._ContentType.CharSet = this._Encoding.WebName;
             return this;
         }
         /// <summary>
@@ -306,7 +315,7 @@ namespace X.Helper.Http
         public Client SetEncoding(string encoding)
         {
             this._Encoding = Encoding.GetEncoding(encoding);
-            this._ContentType.CharSet = this._Encoding.WebName;
+            //this._ContentType.CharSet = this._Encoding.WebName;
             return this;
         }
         /// <summary>
@@ -317,7 +326,7 @@ namespace X.Helper.Http
         public Client SetEncoding(int codepage)
         {
             this._Encoding = Encoding.GetEncoding(codepage);
-            this._ContentType.CharSet = this._Encoding.WebName;
+            //this._ContentType.CharSet = this._Encoding.WebName;
             return this;
         }
         #endregion

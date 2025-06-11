@@ -24,7 +24,7 @@ namespace TestConsoleApp
             //Http.HttpTest.HttpGetTest();
             //Http.HttpTest.HttpGetWithCookieTest();
             //Http.HttpTest.HttpGet301Test();
-            //Http.HttpTest.HttpPostTest();
+            Http.HttpTest.HttpPostTest();
             //Http.HttpTest.HttpDownloadFileTest();
             //Http.HttpTest.HttpDownloadFileWithCookieTest();
             //TestTemp();

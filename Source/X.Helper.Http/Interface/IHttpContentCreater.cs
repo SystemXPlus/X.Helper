@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace X.Helper.Http.Interface
 {
-    public interface IHttpContentCreater
+    public interface IHttpContentCreator
     {
         /// <summary>
         /// 创建HTTP内容对象
@@ -17,7 +17,7 @@ namespace X.Helper.Http.Interface
         /// <param name="contentType"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        HttpContent Create(List<Entity.HttpContentParam> contentParams,
+        HttpContent Create(IEnumerable<Entity.HttpContentParam> contentParams,
                            //ContentType contentType,
                            Encoding encoding);
     }

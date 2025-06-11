@@ -24,32 +24,32 @@ namespace X.Helper.Http.Helper
         }
         public HttpContent GetContent()
         {
-            IHttpContentCreater contentCreater = null;
+            IHttpContentCreator contentCreater = null;
             switch (this.HttpContentType)
             {
                 case HttpContentType.RAW_TEXT:
-                    contentCreater = new HttpContentCreater.TextPlainHttpContentCreater();
+                    contentCreater = new HttpContentCreator.TextPlainHttpContentCreator();
                     break;
                 case HttpContentType.RAW_JSON:
-                    contentCreater = new HttpContentCreater.ApplicationJsonHttpContentCreater();
+                    contentCreater = new HttpContentCreator.ApplicationJsonHttpContentCreator();
                     break;
                 case HttpContentType.RAW_XML:
-                    contentCreater = new HttpContentCreater.ApplicationXmlHttpContentCreater();
+                    contentCreater = new HttpContentCreator.ApplicationXmlHttpContentCreator();
                     break;
                 case HttpContentType.RAW_HTML:
-                    contentCreater = new HttpContentCreater.TextHtmlHttpContentCreater();
+                    contentCreater = new HttpContentCreator.TextHtmlHttpContentCreator();
                     break;
                 case HttpContentType.RAW_JAVASCRIPT:
-                    contentCreater = new HttpContentCreater.ApplicationJavaScriptHttpContentCreater();
+                    contentCreater = new HttpContentCreator.ApplicationJavaScriptHttpContentCreator();
                     break;
                 case HttpContentType.X_WWW_FORM_URLENCODED:
-                    contentCreater = new HttpContentCreater.ApplicationFormUrlEncodedHttpContentCreater();
+                    contentCreater = new HttpContentCreator.ApplicationFormUrlEncodedHttpContentCreator();
                     break;
                 case HttpContentType.MULTIPART_FORM_DATA:
-                    contentCreater = new HttpContentCreater.MultipartFormDataHttpContentCreater();
+                    contentCreater = new HttpContentCreator.MultipartFormDataHttpContentCreator();
                     break;
                 case HttpContentType.BINARY:
-                    contentCreater = new HttpContentCreater.ApplicationOctetStreamHttpContentCreater();
+                    contentCreater = new HttpContentCreator.ApplicationOctetStreamHttpContentCreator();
                     break;
                 default:
                     throw new NotSupportedException($"不支持的HTTP内容类型: {this.HttpContentType}");

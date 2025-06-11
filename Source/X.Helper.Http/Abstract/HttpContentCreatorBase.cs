@@ -8,7 +8,7 @@ using X.Helper.Http.Entity;
 
 namespace X.Helper.Http.Abstract
 {
-    public abstract class HttpContentCreaterBase : Interface.IHttpContentCreater
+    public abstract class HttpContentCreatorBase : Interface.IHttpContentCreator
     {
         /// <summary>
         /// HttpContentTypeName
@@ -19,6 +19,6 @@ namespace X.Helper.Http.Abstract
         /// </summary>
         protected Encoding ContentEncoding { get; set; } = Encoding.UTF8;
 
-        public abstract HttpContent Create(List<HttpContentParam> contentParams, Encoding encoding);
+        public abstract HttpContent Create(IEnumerable<HttpContentParam> contentParams, Encoding encoding);
     }
 }

@@ -17,7 +17,7 @@ namespace X.Helper.Http
 {
     public partial class Client : IDisposable
     {
-        
+
         #region 构造
         public Client() : this(uri: null, handler: null)
         {
@@ -33,7 +33,7 @@ namespace X.Helper.Http
         {
 
         }
-        public Client (string url, HttpHandler handler) : this(uri: new Uri(url), handler: handler.Handler)
+        public Client(string url, HttpHandler handler) : this(uri: new Uri(url), handler: handler.Handler)
         {
 
         }
@@ -132,14 +132,20 @@ namespace X.Helper.Http
         {
             PreRequest();
 
-            
+
 
             var result = new Result();
             try
             {
 
                 _HttpClient.Timeout = this._Timeout;
-
+                if (this._Method != Enums.HttpMethod.GET)
+                {
+                    if (this._RequestHttpContent != null)
+                    {
+                        _RequestMessage.Content = this._RequestHttpContent;
+                    }
+                }
                 using (this._ResponseMessage = await _HttpClient.SendAsync(_RequestMessage))
                 {
                     //处理ResponseMessage返回Result
@@ -159,10 +165,10 @@ namespace X.Helper.Http
                     }
                 }
             }
-            catch(TaskCanceledException ex)
+            catch (TaskCanceledException ex)
             {
                 var errMsg = $"请求取消：{ex.Message}";
-                if(ex.InnerException != null)
+                if (ex.InnerException != null)
                     errMsg += $" -> {ex.InnerException.Message}";
                 return new Result
                 {
@@ -266,7 +272,7 @@ namespace X.Helper.Http
 
 
 
-            
+
             //增加HTTPS请求的特殊处理，强制使用Http1.0 BY QQ607432
             if (this._Uri.ToString().StartsWith("https", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -298,13 +304,16 @@ namespace X.Helper.Http
         /// </summary>
         private void CreateRequestHeader()
         {
+            _RequestMessage.Headers.Clear();
             if (!string.IsNullOrEmpty(_Referer))
                 _RequestMessage.Headers.Add("Referer", _Referer);
+            _RequestMessage.Headers.TryAddWithoutValidation("Accept", _Accept ?? "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
             if (!string.IsNullOrEmpty(_UserAgent))
                 _RequestMessage.Headers.Add("User-Agent", _UserAgent);
             if (!string.IsNullOrEmpty(_Origin))
                 _RequestMessage.Headers.Add("Origin", _Origin);
             _RequestMessage.Headers.Add("Connection", _KeepAlive ? "Keep-Alive" : "close");
+
 
 
             CreateHeaderCookie();
@@ -315,6 +324,9 @@ namespace X.Helper.Http
             CreateHeaderCacheControl();
 
 
+            //将用户自定义的HEADERS集合添加到RequestMessage.Headers中
+            //在设置完COOKIE/ACCEPT等头部后再添加用户自定义的Headers，用户自定义HEADER将覆盖之前值 
+            CreateCustomHeader();
 
 
             //CONTENT TYPE
@@ -503,6 +515,46 @@ namespace X.Helper.Http
             if (arr == null || arr.Length == 0)
                 return;
             this._RequestMessage.Headers.Add("Cache-Control", arr.Select(a => a.Trim()));
+        }
+
+        private void CreateCustomHeader()
+        {
+            if (_CustomRequestHeaders == null || _CustomRequestHeaders.Count == 0)
+                return;
+            foreach (var item in _CustomRequestHeaders)
+            {
+                if (item.HasAdded)
+                    continue;
+
+                var headerName = item.Name;
+                var headerValue = item.Value ?? string.Empty;
+                var isUniqueHeader = Common.UniqueHeaderNames.Any(n => n.Equals(headerName, StringComparison.OrdinalIgnoreCase));
+                if (isUniqueHeader)
+                {
+                    if (_RequestMessage.Headers.Contains(item.Name))
+                        _RequestMessage.Headers.Remove(item.Name);
+                }
+                if (item.Value is IEnumerable<string> values)
+                {
+                    if (isUniqueHeader)
+                    {
+                        _RequestMessage.Headers.Add(item.Name, string.Join(",", values));
+                    }
+                    else
+                    {
+                        foreach (var value in values)
+                        {
+                            _RequestMessage.Headers.Add(item.Name, value);
+                        }
+                    }
+                }
+                else
+                {
+                    _RequestMessage.Headers.Add(item.Name, item.Value.ToString());
+                }
+
+                item.HasAdded = true;
+            }
         }
 
         #endregion

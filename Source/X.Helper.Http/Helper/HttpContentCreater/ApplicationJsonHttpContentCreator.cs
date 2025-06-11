@@ -7,11 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using X.Helper.Http.Entity;
 
-namespace X.Helper.Http.Helper.HttpContentCreater
+namespace X.Helper.Http.Helper.HttpContentCreator
 {
-    public class ApplicationFormUrlEncodedHttpContentCreater : Abstract.HttpContentCreaterBase
+    public class ApplicationJsonHttpContentCreator : Abstract.HttpContentCreatorBase
     {
-        public override HttpContent Create(List<HttpContentParam> contentParams, Encoding encoding)
+
+        public override HttpContent Create(IEnumerable<HttpContentParam> contentParams, Encoding encoding)
         {
             throw new NotImplementedException();
         }

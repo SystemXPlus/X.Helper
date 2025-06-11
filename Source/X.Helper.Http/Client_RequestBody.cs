@@ -13,7 +13,7 @@ namespace X.Helper.Http
     {
         public Client SetContentType(Enums.HttpContentType contentType)
         {
-            SetContentType(contentType.GetDescription());
+            //SetContentType(contentType.GetDescription());
             _RequestBodyContentType = contentType;
             //CLEAR PARAMS LIST
             _RequestContentParams.Clear();
@@ -141,6 +141,7 @@ namespace X.Helper.Http
             AddFile(name, filePath);
             return this;
         }
+
         /// <summary>
         /// 添加文件到上传文件列表
         /// </summary>
@@ -215,25 +216,12 @@ namespace X.Helper.Http
             return this;
         }
 
-        /// <summary>
-        /// 添加文件到上传文件列表
-        /// </summary>
-        /// <param name="filePath">文件完整路径</param>
-        /// <returns></returns>
-        public Client AddFile(string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath))
-                throw new ArgumentException(@"filePath is null or empty");
 
-            var name = filePath.Substring(filePath.IndexOf("\\") + 1);
-
-            return AddFile(name, filePath);
-        }
 
 
         #endregion
 
-
+        [Obsolete("弃用，请使用 SetContentType(Enums.HttpContentType contentType) 方法", true)]
         private Client SetContentType(string mediaType)
         {
             if (!string.IsNullOrEmpty(mediaType))
@@ -247,6 +235,7 @@ namespace X.Helper.Http
         /// </summary>
         /// <param name="contentType"></param>
         /// <returns></returns>
+        [Obsolete("弃用，请使用 SetContentType(Enums.HttpContentType contentType) 方法", true)]
         private Client SetContentType(string mediaType, string charset)
         {
             if (!string.IsNullOrEmpty(mediaType))
@@ -268,6 +257,7 @@ namespace X.Helper.Http
         /// </summary>
         /// <param name="contentType"></param>
         /// <returns></returns>
+        [Obsolete("弃用，请使用 SetContentType(Enums.HttpContentType contentType) 方法", true)]
         private Client SetContentType(MediaTypeHeaderValue contentType)
         {
             if (contentType != null)

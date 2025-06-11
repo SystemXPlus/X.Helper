@@ -81,12 +81,20 @@ namespace TestConsoleApp.Http
 
         public static void HttpPostTest()
         {
-            var url = "http://api.zgsmile.com/Api/Resume/GetAllSiteRegularList";
+            //var url = "http://api.zgsmile.com/Api/Resume/GetAllSiteRegularList";
+            var url = "https://198063d6-a2e9-42a8-92ec-3dbb38b2b131.mock.pstmn.io";
             var handler = new X.Helper.Http.HttpHandler();
             using (var client = new X.Helper.Http.Client(url, handler.Handler))
             {
-                client.SetMethod(X.Helper.Http.Enums.HttpMethod.POST);
-                using (var result = client.RequestStringContent().Result)
+                client.SetMethod(X.Helper.Http.Enums.HttpMethod.POST)
+                    .SetHeader("ClientName","AAAAAAAAAAAA")
+                    .SetHeader("ClientApiKey","bbbbbbbbbb")
+                    .SetHeader("ClientName", "X.Helper.Http.Client")
+                    .SetHeader("Test-Agent",new string[] {"a","b","c","d","e" })
+                    .SetContentType(X.Helper.Http.Enums.HttpContentType.RAW_TEXT)
+                    .AddContent("abcdefg");
+                
+                using (var result = client.RequestAsync().Result)
                 {
                     ShowResult(result);
                 }
